@@ -48,14 +48,18 @@ export default function Home() {
       </section>
 
       <section className="rounded border border-neutral-200 bg-white p-5 text-sm text-neutral-600">
-        <p className="font-medium text-neutral-900">Build status: Phase 1 complete</p>
+        <p className="font-medium text-neutral-900">Build status: Phase 2 in progress</p>
         <p className="mt-1">
-          Scaffold, corpus and criteria are in place. Reasoning and embeddings
-          both run on Gemini (<code className="font-mono text-xs">gemini-2.5-flash</code>{" "}
-          and <code className="font-mono text-xs">gemini-embedding-001</code>) via
-          a single server-side <code className="font-mono text-xs">GEMINI_API_KEY</code>.
-          Corpus vectors are built at runtime and cached. API routes (Phase 2) and
-          the interactive UI (Phase 5) are not yet built.
+          Reasoning and embeddings both run on Gemini (
+          <code className="font-mono text-xs">gemini-2.5-flash</code> and{" "}
+          <code className="font-mono text-xs">gemini-embedding-001</code>) via a
+          single server-side{" "}
+          <code className="font-mono text-xs">GEMINI_API_KEY</code>. Live routes:{" "}
+          <code className="font-mono text-xs">/api/parse</code>,{" "}
+          <code className="font-mono text-xs">/api/score</code>,{" "}
+          <code className="font-mono text-xs">/api/draft</code>. Retrieval (Phase
+          3), the DP3 gate (Phase 4) and the interactive UI (Phase 5) are not yet
+          built.
         </p>
       </section>
     </main>
