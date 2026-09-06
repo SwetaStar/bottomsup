@@ -48,18 +48,19 @@ export default function Home() {
       </section>
 
       <section className="rounded border border-neutral-200 bg-white p-5 text-sm text-neutral-600">
-        <p className="font-medium text-neutral-900">Build status: Phase 2 in progress</p>
+        <p className="font-medium text-neutral-900">Build status: Phase 2 complete</p>
         <p className="mt-1">
-          Reasoning and embeddings both run on Gemini (
-          <code className="font-mono text-xs">gemini-2.5-flash</code> and{" "}
-          <code className="font-mono text-xs">gemini-embedding-001</code>) via a
-          single server-side{" "}
-          <code className="font-mono text-xs">GEMINI_API_KEY</code>. Live routes:{" "}
+          Reasoning on Gemini{" "}
+          <code className="font-mono text-xs">gemini-3.5-flash-lite</code>,
+          embeddings on{" "}
+          <code className="font-mono text-xs">gemini-embedding-001</code>, one
+          server-side <code className="font-mono text-xs">GEMINI_API_KEY</code>.
+          Live and tested:{" "}
           <code className="font-mono text-xs">/api/parse</code>,{" "}
-          <code className="font-mono text-xs">/api/score</code>,{" "}
-          <code className="font-mono text-xs">/api/draft</code>. Retrieval (Phase
-          3), the DP3 gate (Phase 4) and the interactive UI (Phase 5) are not yet
-          built.
+          <code className="font-mono text-xs">/api/score</code>; also{" "}
+          <code className="font-mono text-xs">/api/draft</code>,{" "}
+          <code className="font-mono text-xs">/api/health</code>. Retrieval (Phase
+          3), the DP3 gate (Phase 4) and the interactive UI (Phase 5) are next.
         </p>
       </section>
     </main>
