@@ -1,36 +1,130 @@
 @import "tailwindcss";
 
-/* Restrained, corporate, always light — the UI is screenshot evidence for the
-   deck, so it does not follow the OS dark-mode preference. */
+/* -------------------------------------------------------------------------
+   VCG Proposal Agent — product palette (from the supplied Coolors set)
+   Pale Sky / Frosted Mint / Muted Olive / Royal Gold / Lime Cream,
+   plus picked neutrals and reserved status colours. Single light theme:
+   the screen is screenshot evidence, so it does not follow OS dark mode.
+---------------------------------------------------------------------------- */
 :root {
-  --background: #ffffff;
-  --foreground: #14181f;
-  --navy: #14324f;
+  --sky: #a7c6da;
+  --sky-deep: #2f5a73;
+  --mint: #eefcce;
+  --olive: #9eb25d;
+  --olive-deep: #5f7a2e;
+  --gold: #f1db4b;
+  --gold-deep: #937212;
+  --lime: #edff71;
+
+  --bg: #f4f6f2;
+  --card: #ffffff;
+  --ink: #222a2d;
+  --muted: #5d676b;
+  --faint: #8b938f;
+  --line: #e2e7db;
+  --line-soft: #edf0e8;
+
+  --btn: #26333b;
+  --btn-hover: #1a242a;
+
+  --pass: #5f7a2e;
+  --pass-bg: #eef6d9;
+  --review: #9a7b12;
+  --review-bg: #fbf1cd;
+  --block: #b23b33;
+  --block-bg: #f6e6e3;
+
+  --font-ui:
+    var(--font-ui), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: var(--font-mono), ui-monospace, "SF Mono", Menlo, monospace;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-navy: var(--navy);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-sky: var(--sky);
+  --color-sky-deep: var(--sky-deep);
+  --color-mint: var(--mint);
+  --color-olive: var(--olive);
+  --color-olive-deep: var(--olive-deep);
+  --color-gold: var(--gold);
+  --color-gold-deep: var(--gold-deep);
+  --color-lime: var(--lime);
+  --color-bg: var(--bg);
+  --color-card: var(--card);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-line: var(--line);
+  --color-line-soft: var(--line-soft);
+  --color-btn: var(--btn);
+  --color-pass: var(--pass);
+  --color-pass-bg: var(--pass-bg);
+  --color-review: var(--review);
+  --color-review-bg: var(--review-bg);
+  --color-block: var(--block);
+  --color-block-bg: var(--block-bg);
+  --font-sans: var(--font-ui);
+  --font-mono: var(--font-mono);
 }
 
+* {
+  box-sizing: border-box;
+}
+html,
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  height: 100%;
+}
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: "tnum" 0;
 }
 
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+/* running-state pulse for pipeline tabs */
 @keyframes vcg-pulse {
   0%,
   100% {
     opacity: 1;
   }
   50% {
-    opacity: 0.45;
+    opacity: 0.4;
   }
 }
-.vcg-running {
-  animation: vcg-pulse 1.1s ease-in-out infinite;
+.vcg-pulse {
+  animation: vcg-pulse 1.15s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vcg-pulse {
+    animation: none;
+  }
+}
+
+/* quiet scrollbars inside panels */
+.scroll-area {
+  scrollbar-width: thin;
+  scrollbar-color: #cdd4c8 transparent;
+}
+.scroll-area::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+.scroll-area::-webkit-scrollbar-thumb {
+  background: #d4dacd;
+  border-radius: 999px;
+  border: 3px solid var(--bg);
+}
+
+:focus-visible {
+  outline: 2px solid var(--sky-deep);
+  outline-offset: 2px;
+  border-radius: 4px;
 }

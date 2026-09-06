@@ -15,7 +15,7 @@
 // ============================================================================
 
 import { recordsForClient, recordById } from "@/lib/data";
-import type { CheckFlag, CheckResult, Draft } from "@/lib/types";
+import type { CheckFlag, CheckResult, CheckStep, Draft } from "@/lib/types";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -48,12 +48,11 @@ export async function POST(request: Request) {
     }
 
     const flags: CheckFlag[] = [];
+    const checks: CheckStep[] = [];
 
     // ---- CHECK 1 — Client permission ----
-    // Find the corpus record(s) for clientId.
     const clientRecords = recordsForClient(clientId);
     if (clientRecords.length === 0) {
-      // No record exists.
       flags.push({
         code: "MSA-UNKNOWN",
         severity: UNKNOWN_CLIENT_SEVERITY,
@@ -62,8 +61,17 @@ export async function POST(request: Request) {
           `a partner must confirm the client's contract permits AI tooling in ` +
           `delivery before this draft is released.`,
       });
+      checks.push({
+        id: "CHECK-1",
+        label: "Client permission",
+        question: `Does ${clientId}'s master agreement permit AI tooling in delivery?`,
+        outcome: UNKNOWN_CLIENT_SEVERITY === "BLOCK" ? "BLOCK" : "REVIEW",
+        detail:
+          `${clientId} is not in the engagement library — no master agreement ` +
+          `on file. Cannot confirm the client's terms; a partner must check ` +
+          `before release.`,
+      });
     } else if (clientRecords.some((r) => r.ai_use_permitted === false)) {
-      // ai_use_permitted === false for this client.
       const r = clientRecords.find((x) => x.ai_use_permitted === false)!;
       flags.push({
         code: "MSA-PROHIBITED",
@@ -72,11 +80,31 @@ export async function POST(request: Request) {
           `${clientId} MSA does not permit generative AI or automated tooling ` +
           `in delivery (${r.id}: ${r.msa_note}). Draft withheld and escalated.`,
       });
+      checks.push({
+        id: "CHECK-1",
+        label: "Client permission",
+        question: `Does ${clientId}'s master agreement permit AI tooling in delivery?`,
+        outcome: "BLOCK",
+        detail:
+          `Found ${r.id} (${r.company.name}). Its MSA note: "${r.msa_note}" ` +
+          `→ AI tooling is not permitted for this client.`,
+      });
+    } else {
+      const r = clientRecords[0];
+      checks.push({
+        id: "CHECK-1",
+        label: "Client permission",
+        question: `Does ${clientId}'s master agreement permit AI tooling in delivery?`,
+        outcome: "PASS",
+        detail:
+          `Found ${clientRecords.map((x) => x.id).join(", ")} for ${clientId}. ` +
+          `MSA note: "${r.msa_note}" → AI tooling is permitted.`,
+      });
     }
 
     // ---- CHECK 2 — Cross-client contamination ----
-    // For each id in sourcesUsed, find that record; if ai_use_permitted === false, block.
     const seenCrossClient = new Set<string>();
+    const citedEngagements = sourcesUsed.filter((s) => /^ENG-\d+$/.test(s));
     for (const id of sourcesUsed) {
       const r = recordById(id);
       if (r && r.ai_use_permitted === false && !seenCrossClient.has(id)) {
@@ -90,9 +118,23 @@ export async function POST(request: Request) {
         });
       }
     }
+    checks.push({
+      id: "CHECK-2",
+      label: "Cross-client contamination",
+      question:
+        "Does the draft build on any past engagement whose contract bars AI tooling?",
+      outcome: seenCrossClient.size > 0 ? "BLOCK" : "PASS",
+      detail:
+        seenCrossClient.size > 0
+          ? `Restricted engagement(s) cited: ${[...seenCrossClient].join(", ")}.`
+          : `Draft cites ${
+              citedEngagements.length
+                ? citedEngagements.join(", ")
+                : "no engagement records"
+            }. None are contract-restricted.`,
+    });
 
     // ---- CHECK 3 — Unsourced claims ----
-    // Count occurrences of "UNSOURCED" in JSON.stringify(draft).
     const unsourced = (JSON.stringify(draft).match(/UNSOURCED/g) ?? []).length;
     if (unsourced > 0) {
       flags.push({
@@ -103,6 +145,17 @@ export async function POST(request: Request) {
           `verify or remove each before the draft leaves the building.`,
       });
     }
+    checks.push({
+      id: "CHECK-3",
+      label: "Unsourced claims",
+      question: 'Does the draft contain any line marked "UNSOURCED"?',
+      outcome: unsourced > 0 ? "REVIEW" : "PASS",
+      detail:
+        unsourced > 0
+          ? `Found ${unsourced} occurrence(s) of "UNSOURCED" in the draft. Each ` +
+            `needs a partner to verify or delete it.`
+          : `Scanned the whole draft for "UNSOURCED" — 0 found. Every line carries a source.`,
+    });
 
     // ---- Verdict ----
     const hasBlock = flags.some((f) => f.severity === "BLOCK");
@@ -117,6 +170,7 @@ export async function POST(request: Request) {
       status,
       can_proceed: !hasBlock, // true only if no BLOCK-severity flag
       flags,
+      checks,
     };
     return Response.json(result);
   } catch (err) {

@@ -172,10 +172,21 @@ export type CheckFlag = {
   detail: string;
 };
 
+// One line per check, always returned (pass or fail) so the UI can show what
+// was verified and why, not only what failed.
+export type CheckStep = {
+  id: "CHECK-1" | "CHECK-2" | "CHECK-3";
+  label: string;
+  question: string;
+  outcome: "PASS" | "REVIEW" | "BLOCK";
+  detail: string;
+};
+
 export type CheckResult = {
   status: "BLOCKED" | "PASS WITH REVIEW" | "PASS";
   can_proceed: boolean;
   flags: CheckFlag[];
+  checks: CheckStep[];
 };
 
 // ---- UI ----

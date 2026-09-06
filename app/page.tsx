@@ -1,9 +1,9 @@
-// Server wrapper: passes the corpus client ids to the client orchestrator.
-// All pipeline logic and rendering live in app/agent.tsx.
+// Server wrapper: hands the corpus client ids and the pursuit criteria to the
+// client orchestrator. All pipeline logic and rendering live in app/agent.tsx.
 
 import Agent from "@/app/agent";
-import { clientIds } from "@/lib/data";
+import { clientIds, criteria } from "@/lib/data";
 
 export default function Page() {
-  return <Agent clientIds={clientIds} />;
+  return <Agent clientIds={clientIds} criteria={criteria} />;
 }
