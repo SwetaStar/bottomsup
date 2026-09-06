@@ -4,15 +4,17 @@
 // Environment Variable in production (and optionally in .env.local for local
 // dev). It is never exposed to the browser and never prefixed with NEXT_PUBLIC_.
 //
-// Model note: SPEC named a Claude model. We use Gemini (user decision). The
-// newest flash models carry a very small free-tier daily quota (gemini-3.6-flash
-// returned a hard limit of 20 requests/day on this key), so the default here is
-// gemini-2.0-flash, which has a much larger free-tier allowance. Override with
-// the GEMINI_MODEL env var without a code change if needed.
+// Model note: SPEC named a Claude model. We use Gemini (user decision).
+// New Gemini API keys can only use the 3.x line (2.x / 2.0 now 404 with
+// "no longer available"). Among 3.x, gemini-3.6-flash returned a hard
+// free-tier limit of 20 requests/day on this key; gemini-3.5-flash-lite is
+// Google's "high-volume automation" tier and is the default here. Override
+// with the GEMINI_MODEL env var (no code change) if quota/availability shifts.
 
 import { GoogleGenAI } from "@google/genai";
 
-export const REASONING_MODEL = process.env.GEMINI_MODEL || "gemini-2.0-flash";
+export const REASONING_MODEL =
+  process.env.GEMINI_MODEL || "gemini-3.5-flash-lite";
 export const EMBEDDING_MODEL =
   process.env.GEMINI_EMBEDDING_MODEL || "gemini-embedding-001";
 export const EMBEDDING_DIMS = 1536;
@@ -50,10 +52,14 @@ function friendlyGeminiError(err: unknown): Error {
         " Set GEMINI_MODEL to a model with more free quota, or wait for the daily reset."
     );
   }
-  if (msg.includes('"code":404') && msg.includes("not")) {
+  if (
+    msg.includes('"code":404') ||
+    msg.includes("no longer available") ||
+    msg.includes("NOT_FOUND")
+  ) {
     return new Error(
       `Gemini model ${REASONING_MODEL} is not available to this key. ` +
-        "Set GEMINI_MODEL to a currently-available model."
+        "Set the GEMINI_MODEL env var to a currently-available model."
     );
   }
   return err instanceof Error ? err : new Error(msg);
