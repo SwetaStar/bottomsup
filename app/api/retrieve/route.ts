@@ -80,12 +80,22 @@ export async function POST(request: Request) {
           title: r.engagement.title,
           outcome: r.outcome.status,
           similarity: vec ? cosineSimilarity(queryVec, vec) : 0,
+          ai_use_permitted: r.ai_use_permitted,
+          excluded_restricted: false,
         };
       })
       .sort((a, b) => b.similarity - a.similarity);
 
-    // 4. Top K become `selected`.
-    const top = all_scored.slice(0, topK);
+    // 4. Top K become `selected` — but a record whose MSA does not permit AI
+    // tooling (ai_use_permitted === false) is never drafted from. It stays in
+    // the ranked list, marked, so the retrieval is still visibly honest; it is
+    // just skipped when picking what to build the proposal on. DP3's CHECK 2
+    // remains as a backstop for anything that slips through (e.g. Phase 6
+    // uploads).
+    for (const s of all_scored) {
+      if (!s.ai_use_permitted) s.excluded_restricted = true;
+    }
+    const top = all_scored.filter((s) => s.ai_use_permitted).slice(0, topK);
 
     // 5. One grounded Gemini call per selected record. Sequential to stay well
     // under the free-tier rate limit; a failure yields reason: null rather than

@@ -115,6 +115,10 @@ export type ScoredRecord = {
   title: string;
   outcome: "WON" | "LOST";
   similarity: number;
+  ai_use_permitted: boolean;
+  // True when ai_use_permitted is false: the record is shown in the ranked
+  // list but is not eligible for `selected` (never drafted from).
+  excluded_restricted: boolean;
 };
 
 export type SelectedRecord = ScoredRecord & {
