@@ -4,9 +4,9 @@
 // Environment Variable in production and (optionally) in .env.local for local
 // dev. It is never exposed to the browser and never prefixed with NEXT_PUBLIC_.
 
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI, ThinkingLevel } from "@google/genai";
 
-export const REASONING_MODEL = "gemini-2.5-flash";
+export const REASONING_MODEL = "gemini-3.6-flash";
 export const EMBEDDING_MODEL = "gemini-embedding-001";
 export const EMBEDDING_DIMS = 1536;
 
@@ -26,7 +26,12 @@ export function getClient(): GoogleGenAI {
 
 type CallOptions = {
   prompt: string;
-  /** SPEC: 4000 for the draft route, 2000 elsewhere. */
+  /**
+   * SPEC (written for Claude) said 2000 / 4000. gemini-3.6-flash is a
+   * thinking-first model and spends part of the output budget on reasoning
+   * tokens, so the visible-JSON budgets are raised to avoid truncation:
+   * 4000 for most routes, 8000 for the draft. thinkingLevel is held to LOW.
+   */
   maxOutputTokens?: number;
   /** SPEC: temperature 0.2. */
   temperature?: number;
@@ -34,13 +39,12 @@ type CallOptions = {
 
 /**
  * Single-turn call to Gemini that returns the raw text response.
- * Thinking is disabled so the token budget applies to real output and the
- * responses stay close to deterministic (SPEC asks for temperature 0.2).
- * The caller is expected to run the result through safeParseJSON.
+ * temperature 0.2 and thinkingLevel LOW keep the output close to
+ * deterministic. The caller runs the result through safeParseJSON.
  */
 export async function callGemini({
   prompt,
-  maxOutputTokens = 2000,
+  maxOutputTokens = 4000,
   temperature = 0.2,
 }: CallOptions): Promise<string> {
   const ai = getClient();
@@ -52,7 +56,7 @@ export async function callGemini({
       temperature,
       maxOutputTokens,
       responseMimeType: "application/json",
-      thinkingConfig: { thinkingBudget: 0 },
+      thinkingConfig: { thinkingLevel: ThinkingLevel.LOW },
     },
   });
 

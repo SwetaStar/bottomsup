@@ -29,7 +29,6 @@ export async function POST(request: Request) {
         JSON.stringify(rfp, null, 2),
         JSON.stringify(criteria, null, 2)
       ),
-      maxOutputTokens: 2000,
     });
     const result = safeParseJSON<ScoreResult>(raw);
 

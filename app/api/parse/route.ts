@@ -19,10 +19,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const raw = await callGemini({
-      prompt: parsePrompt(rfpText),
-      maxOutputTokens: 2000,
-    });
+    const raw = await callGemini({ prompt: parsePrompt(rfpText) });
     const parsed = safeParseJSON<ParsedRFP>(raw);
 
     return Response.json({ parsed });

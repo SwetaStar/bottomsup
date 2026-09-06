@@ -1,5 +1,6 @@
 // Stage 4 — Draft. POST { rfp, selected } -> proposal outline, a source on
-// every claim. max_tokens 4000 here (SPEC). Runs only after HA1 approval.
+// every claim. Larger token budget than the other routes (SPEC), bumped for
+// gemini-3.6-flash reasoning overhead. Runs only after HA1 approval.
 
 import { callGemini } from "@/lib/gemini";
 import { safeParseJSON } from "@/lib/json";
@@ -35,7 +36,7 @@ export async function POST(request: Request) {
         JSON.stringify(selected, null, 2),
         JSON.stringify(criteria.firm_context, null, 2)
       ),
-      maxOutputTokens: 4000,
+      maxOutputTokens: 8000,
     });
     const draft = safeParseJSON<Draft>(raw);
 
