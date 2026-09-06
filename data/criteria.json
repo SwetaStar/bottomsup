@@ -1,0 +1,29 @@
+{
+  "criteria": [
+    { "id": "C1", "name": "Sector fit", "weight": 0.20, "anchors": { "5": "Core sector, 3+ credentials in past 3 years", "3": "Adjacent sector, some transferable credentials", "1": "No relevant sector presence" } },
+    { "id": "C2", "name": "Capability fit", "weight": 0.20, "anchors": { "5": "Scope maps directly to an existing VCG service line", "3": "Majority maps; some capability borrowed", "1": "Scope largely outside current capability" } },
+    { "id": "C3", "name": "Competitive position", "weight": 0.15, "anchors": { "5": "Incumbent or warm relationship", "3": "Known to buyer, no incumbency", "1": "Cold, strong incumbent likely" } },
+    { "id": "C4", "name": "Commercial viability", "weight": 0.20, "anchors": { "5": "Budget comfortably supports 38% margin", "3": "Supports margin only with tight staffing", "1": "Below profitable delivery level" } },
+    { "id": "C5", "name": "Capacity and mobilisation", "weight": 0.15, "anchors": { "5": "Named partner and team available for stated start", "3": "Available with reallocation", "1": "No realistic capacity" } },
+    { "id": "C6", "name": "Conflict and risk", "weight": 0.10, "anchors": { "5": "No conflict, standard terms expected", "3": "Manageable conflict or clause to negotiate", "1": "Live conflict or unacceptable terms" } }
+  ],
+  "thresholds": { "pursue": 3.6, "conditional": 2.8 },
+  "escalations": [
+    { "id": "E1", "rule": "Any live conflict with an existing client" },
+    { "id": "E2", "rule": "Any requirement to accept unlimited liability" },
+    { "id": "E3", "rule": "Client MSA does not permit generative AI tooling in delivery" },
+    { "id": "E4", "rule": "Request to bid below the 38 percent margin floor" }
+  ],
+  "firm_context": {
+    "core_sectors": ["Financial services", "Healthcare provider", "Industrial manufacturing", "Public sector"],
+    "adjacent_sectors": ["Retail", "Logistics", "Energy and utilities"],
+    "outside_capability": ["Clinical protocol design", "Litigation support", "Statutory audit"],
+    "margin_floor": 0.38,
+    "blended_day_rate_inr": 120000,
+    "partners_available": [
+      { "name": "R. Iyer", "years": 14, "focus": "Healthcare operations", "availability": "40%" },
+      { "name": "S. Menon", "years": 11, "focus": "Procurement and shared services", "availability": "60%" },
+      { "name": "A. Fernandes", "years": 9, "focus": "Patient flow", "availability": "100%" }
+    ]
+  }
+}

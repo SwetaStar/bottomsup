@@ -1,0 +1,410 @@
+{
+  "corpus_version": "2026-09",
+  "description": "Vertex Consulting Group engagement library. Twelve past engagements with company profile, financial detail and project detail. Used for embedding-based retrieval. All entities are fictional.",
+  "records": [
+    {
+      "id": "ENG-001",
+      "client_id": "CLI-ARCADIA",
+      "company": {
+        "name": "Arcadia Hospitals Group",
+        "sector": "Healthcare provider",
+        "sub_sector": "Multi-speciality hospitals",
+        "geography": "West and South India",
+        "employees": 4800,
+        "annual_revenue_cr": 1750,
+        "ownership": "PE-backed, growth by acquisition"
+      },
+      "engagement": {
+        "title": "Procurement consolidation and shared services design across 9 hospitals",
+        "year": 2025,
+        "duration_weeks": 16,
+        "fee_cr": 1.85,
+        "fee_structure": "Fixed fee",
+        "team": "1 Partner (40%), 1 Principal, 2 Managers, 4 Consultants",
+        "scope": "Spend cube across 9 sites covering Rs 41 Cr of addressable spend; supplier fragmentation analysis; shared services operating model for finance and procurement; 18-month roadmap with bottom-up benefits case."
+      },
+      "outcome": {
+        "status": "WON",
+        "results": "11 percent of addressable spend realised in year one. Shared services business case approved at Board in first submission.",
+        "client_satisfaction": "9/10"
+      },
+      "win_themes": [
+        "Single named partner on site two days a week for the full engagement",
+        "Spend cube delivered in week 3, not week 10 - early proof of value",
+        "Benefits case built bottom-up from supplier-level data, not benchmarks"
+      ],
+      "reusable_assets": ["Spend cube methodology", "Supplier fragmentation heat map", "Shared-services location scorecard"],
+      "ai_use_permitted": true,
+      "msa_note": "Standard terms. Named human reviewer required on all deliverables."
+    },
+    {
+      "id": "ENG-002",
+      "client_id": "CLI-ARCADIA",
+      "company": {
+        "name": "Arcadia Hospitals Group",
+        "sector": "Healthcare provider",
+        "sub_sector": "Multi-speciality hospitals",
+        "geography": "West and South India",
+        "employees": 4800,
+        "annual_revenue_cr": 1750,
+        "ownership": "PE-backed, growth by acquisition"
+      },
+      "engagement": {
+        "title": "Patient throughput and theatre utilisation diagnostic",
+        "year": 2026,
+        "duration_weeks": 10,
+        "fee_cr": 0.95,
+        "fee_structure": "Fixed fee",
+        "team": "1 Partner (30%), 1 Principal, 1 Manager, 3 Consultants",
+        "scope": "Outpatient scheduling redesign, theatre utilisation analysis and discharge process mapping across 4 flagship sites. Throughput model calibrated on 24 months of the client's own admissions data."
+      },
+      "outcome": {
+        "status": "WON",
+        "results": "Theatre utilisation up 14 percentage points across 4 sites in 10 months. Average discharge lead time reduced 31 percent.",
+        "client_satisfaction": "9/10"
+      },
+      "win_themes": [
+        "Throughput model calibrated on the client's own data, not industry benchmarks",
+        "Clinician-led design sessions rather than consultant-led workshops",
+        "Committed to a measured throughput uplift, not an estimated one"
+      ],
+      "reusable_assets": ["Theatre utilisation model", "Discharge bottleneck taxonomy", "Clinician engagement protocol"],
+      "ai_use_permitted": true,
+      "msa_note": "Standard terms. Named human reviewer required on all deliverables."
+    },
+    {
+      "id": "ENG-003",
+      "client_id": "CLI-KESTREL",
+      "company": {
+        "name": "Kestrel Diagnostics Chain",
+        "sector": "Healthcare provider",
+        "sub_sector": "Diagnostics and pathology",
+        "geography": "North India",
+        "employees": 1900,
+        "annual_revenue_cr": 420,
+        "ownership": "Family-owned, acquisitive"
+      },
+      "engagement": {
+        "title": "Post-acquisition integration of 6 diagnostic centres",
+        "year": 2024,
+        "duration_weeks": 14,
+        "fee_cr": 1.7,
+        "fee_structure": "Fixed fee (proposed)",
+        "team": "1 Partner (50%), 2 Principals, 2 Managers",
+        "scope": "Integration of billing, procurement and patient administration across acquired centres. Synergy case validated against the acquisition model. Integration control tower from week one."
+      },
+      "outcome": {
+        "status": "LOST",
+        "results": "Priced 22 percent above the winning bidder. Client feedback: approach was strong but the team was seen as too senior-heavy for the budget.",
+        "client_satisfaction": null
+      },
+      "win_themes": ["Integration control tower operating from week one", "Synergy case validated against the acquisition model"],
+      "reusable_assets": ["Integration control tower design", "Synergy validation framework"],
+      "ai_use_permitted": true,
+      "msa_note": "Standard terms."
+    },
+    {
+      "id": "ENG-004",
+      "client_id": "CLI-ASHFORD",
+      "company": {
+        "name": "Ashford Speciality Care",
+        "sector": "Healthcare provider",
+        "sub_sector": "Speciality clinics",
+        "geography": "South India",
+        "employees": 1200,
+        "annual_revenue_cr": 310,
+        "ownership": "Private, founder-led"
+      },
+      "engagement": {
+        "title": "Procurement diagnostic and quick-win capture sprint",
+        "year": 2026,
+        "duration_weeks": 8,
+        "fee_cr": 0.55,
+        "fee_structure": "Fixed fee",
+        "team": "1 Partner (25%), 1 Manager, 2 Consultants",
+        "scope": "Eight-week procurement diagnostic across 5 sites with a parallel quick-win capture sprint. Procurement data cleansed and handed back as a reusable client asset."
+      },
+      "outcome": {
+        "status": "WON",
+        "results": "Quick wins funded the remainder of the programme within the first quarter. Rs 6.2 Cr annualised savings identified, Rs 2.1 Cr captured in-engagement.",
+        "client_satisfaction": "8/10"
+      },
+      "win_themes": [
+        "Quick-win sprint funded the rest of the programme within the first quarter",
+        "Procurement data cleansed and handed back as a reusable client asset"
+      ],
+      "reusable_assets": ["Quick-win capture sprint plan", "Procurement data cleansing scripts"],
+      "ai_use_permitted": true,
+      "msa_note": "Standard terms."
+    },
+    {
+      "id": "ENG-005",
+      "client_id": "CLI-VELA",
+      "company": {
+        "name": "Vela Financial Services",
+        "sector": "Financial services",
+        "sub_sector": "Non-banking financial company",
+        "geography": "Pan-India",
+        "employees": 7400,
+        "annual_revenue_cr": 3100,
+        "ownership": "Listed"
+      },
+      "engagement": {
+        "title": "Shared services and operating model redesign",
+        "year": 2026,
+        "duration_weeks": 12,
+        "fee_cr": 1.4,
+        "fee_structure": "Fixed fee",
+        "team": "1 Partner (35%), 1 Principal, 2 Managers, 3 Consultants",
+        "scope": "Finance and HR shared services design, location strategy across three cities, transition roadmap sequenced around the financial close calendar. Location strategy grounded in a live talent-availability study."
+      },
+      "outcome": {
+        "status": "WON",
+        "results": "Rs 22 Cr annual run-rate cost reduction identified. Transition completed on schedule across two waves.",
+        "client_satisfaction": "8/10"
+      },
+      "win_themes": [
+        "Location strategy grounded in a live talent-availability study, not desk research",
+        "Transition roadmap sequenced around the client's financial close calendar"
+      ],
+      "reusable_assets": ["Shared-services location scorecard", "Transition risk register", "FTE baselining template"],
+      "ai_use_permitted": false,
+      "msa_note": "MSA signed 2021 prohibits processing of client material by third-party automated systems. Renegotiation pending with Legal."
+    },
+    {
+      "id": "ENG-006",
+      "client_id": "CLI-MERIDIAN-CAP",
+      "company": {
+        "name": "Meridian Capital Partners",
+        "sector": "Financial services",
+        "sub_sector": "Asset management",
+        "geography": "Mumbai and Singapore",
+        "employees": 640,
+        "annual_revenue_cr": 890,
+        "ownership": "Partnership"
+      },
+      "engagement": {
+        "title": "Middle-office target operating model and vendor consolidation",
+        "year": 2025,
+        "duration_weeks": 11,
+        "fee_cr": 1.15,
+        "fee_structure": "Fixed fee with outcome-linked component",
+        "team": "1 Partner (40%), 1 Principal, 2 Managers",
+        "scope": "Middle-office process redesign, vendor landscape rationalisation from 14 providers to 5, target operating model with a build-versus-buy assessment."
+      },
+      "outcome": {
+        "status": "WON",
+        "results": "Vendor spend reduced 28 percent. Trade break rate reduced by a third within six months.",
+        "client_satisfaction": "9/10"
+      },
+      "win_themes": [
+        "Outcome-linked fee tied to realised vendor savings",
+        "Build-versus-buy assessment run as an open book with the client's own technology team"
+      ],
+      "reusable_assets": ["Vendor rationalisation framework", "Middle-office process taxonomy"],
+      "ai_use_permitted": true,
+      "msa_note": "Standard terms."
+    },
+    {
+      "id": "ENG-007",
+      "client_id": "CLI-NORTHBRIDGE",
+      "company": {
+        "name": "Northbridge Manufacturing",
+        "sector": "Industrial manufacturing",
+        "sub_sector": "Auto components",
+        "geography": "West India, 11 plants",
+        "employees": 9200,
+        "annual_revenue_cr": 4600,
+        "ownership": "Listed, promoter-controlled"
+      },
+      "engagement": {
+        "title": "Multi-site procurement transformation",
+        "year": 2025,
+        "duration_weeks": 20,
+        "fee_cr": 2.4,
+        "fee_structure": "Fixed fee plus outcome-linked component",
+        "team": "1 Partner (50%), 2 Principals, 3 Managers, 5 Consultants",
+        "scope": "Direct and indirect spend analysis across 11 plants, category strategy development, supplier negotiation support, category playbooks handed over for client-run wave two."
+      },
+      "outcome": {
+        "status": "WON",
+        "results": "Rs 112 Cr addressable spend analysed. 8.4 percent realised savings in year one. Client ran wave two independently.",
+        "client_satisfaction": "9/10"
+      },
+      "win_themes": [
+        "Outcome-linked fee tied to realised savings, not identified savings",
+        "Category playbooks handed over so the client could run wave two alone"
+      ],
+      "reusable_assets": ["Category strategy playbooks", "Savings realisation tracker", "Supplier negotiation toolkit"],
+      "ai_use_permitted": true,
+      "msa_note": "Standard terms."
+    },
+    {
+      "id": "ENG-008",
+      "client_id": "CLI-STELLAR",
+      "company": {
+        "name": "Stellar Industrial Systems",
+        "sector": "Industrial manufacturing",
+        "sub_sector": "Process equipment",
+        "geography": "South India, 4 plants",
+        "employees": 3100,
+        "annual_revenue_cr": 1280,
+        "ownership": "Joint venture"
+      },
+      "engagement": {
+        "title": "Operations diagnostic and throughput improvement",
+        "year": 2026,
+        "duration_weeks": 9,
+        "fee_cr": 0.78,
+        "fee_structure": "Time and materials",
+        "team": "1 Partner (25%), 1 Manager, 3 Consultants",
+        "scope": "Line-level throughput diagnostic across 4 plants, OEE baselining, bottleneck analysis, 90-day improvement plan."
+      },
+      "outcome": {
+        "status": "WON",
+        "results": "OEE improved 9 percentage points on the two priority lines within the 90-day window.",
+        "client_satisfaction": "7/10"
+      },
+      "win_themes": [
+        "Diagnostic sequenced so the first plant produced results before the fourth was scoped",
+        "Shop-floor supervisors trained to sustain the measurement after handover"
+      ],
+      "reusable_assets": ["OEE baselining template", "Bottleneck diagnostic toolkit"],
+      "ai_use_permitted": true,
+      "msa_note": "Standard terms."
+    },
+    {
+      "id": "ENG-009",
+      "client_id": "CLI-HARROW",
+      "company": {
+        "name": "Harrow Public Health Trust",
+        "sector": "Public sector",
+        "sub_sector": "Public health",
+        "geography": "Single state, 6 facilities",
+        "employees": 5600,
+        "annual_revenue_cr": 980,
+        "ownership": "Government trust"
+      },
+      "engagement": {
+        "title": "Operating model diagnostic and Board-ready transformation roadmap",
+        "year": 2025,
+        "duration_weeks": 9,
+        "fee_cr": 0.8,
+        "fee_structure": "Fixed fee",
+        "team": "1 Partner (30%), 1 Principal, 2 Consultants",
+        "scope": "Diagnostic across clinical support services, prioritised transformation roadmap, two Board presentations. Every recommendation costed and owner-assigned before submission."
+      },
+      "outcome": {
+        "status": "WON",
+        "results": "Roadmap adopted in full by the Trust Board at first presentation.",
+        "client_satisfaction": "9/10"
+      },
+      "win_themes": [
+        "Roadmap written in the Board's own decision language, not consulting language",
+        "Every recommendation costed and owner-assigned before submission"
+      ],
+      "reusable_assets": ["Board-ready roadmap template", "Recommendation costing sheet"],
+      "ai_use_permitted": false,
+      "msa_note": "Public procurement terms require prior written approval for any automated tooling. No approval currently on file."
+    },
+    {
+      "id": "ENG-010",
+      "client_id": "CLI-TERRAMAR",
+      "company": {
+        "name": "Terramar Logistics",
+        "sector": "Logistics",
+        "sub_sector": "Third-party logistics",
+        "geography": "Pan-India, 28 hubs",
+        "employees": 6100,
+        "annual_revenue_cr": 2200,
+        "ownership": "PE-backed"
+      },
+      "engagement": {
+        "title": "Network design and cost-to-serve analysis",
+        "year": 2026,
+        "duration_weeks": 12,
+        "fee_cr": 1.1,
+        "fee_structure": "Time and materials (proposed)",
+        "team": "1 Partner (30%), 1 Principal, 2 Managers",
+        "scope": "Distribution network optimisation, cost-to-serve model at SKU-customer level, service level redesign."
+      },
+      "outcome": {
+        "status": "LOST",
+        "results": "Client in-housed the analysis using its own global capability centre. Feedback: the model was strong but the client concluded it could build and maintain it internally.",
+        "client_satisfaction": null
+      },
+      "win_themes": ["Cost-to-serve model at SKU-customer level"],
+      "reusable_assets": ["Cost-to-serve model architecture"],
+      "ai_use_permitted": true,
+      "msa_note": "Standard terms."
+    },
+    {
+      "id": "ENG-011",
+      "client_id": "CLI-BRIGHTFOLD",
+      "company": {
+        "name": "Brightfold Retail",
+        "sector": "Retail",
+        "sub_sector": "Speciality retail",
+        "geography": "Pan-India, 190 stores",
+        "employees": 8400,
+        "annual_revenue_cr": 3400,
+        "ownership": "Listed"
+      },
+      "engagement": {
+        "title": "Store operations cost structure and back-office shared services",
+        "year": 2025,
+        "duration_weeks": 13,
+        "fee_cr": 1.25,
+        "fee_structure": "Fixed fee",
+        "team": "1 Partner (35%), 1 Principal, 2 Managers, 3 Consultants",
+        "scope": "Store-level cost-to-operate analysis across 190 stores, back-office consolidation design, indirect procurement review."
+      },
+      "outcome": {
+        "status": "WON",
+        "results": "Rs 34 Cr annual cost reduction identified, 62 percent implemented within 12 months.",
+        "client_satisfaction": "8/10"
+      },
+      "win_themes": [
+        "Cost-to-operate analysed at store level, so regional managers could act on their own numbers",
+        "Back-office design validated in two pilot regions before firm-wide rollout"
+      ],
+      "reusable_assets": ["Store cost-to-operate model", "Back-office consolidation blueprint"],
+      "ai_use_permitted": true,
+      "msa_note": "Standard terms."
+    },
+    {
+      "id": "ENG-012",
+      "client_id": "CLI-AXIOM",
+      "company": {
+        "name": "Axiom Energy Services",
+        "sector": "Energy and utilities",
+        "sub_sector": "Renewable operations and maintenance",
+        "geography": "West and North India",
+        "employees": 2300,
+        "annual_revenue_cr": 760,
+        "ownership": "Infrastructure fund owned"
+      },
+      "engagement": {
+        "title": "Shared services design and field operations productivity",
+        "year": 2026,
+        "duration_weeks": 11,
+        "fee_cr": 0.92,
+        "fee_structure": "Fixed fee",
+        "team": "1 Partner (30%), 1 Manager, 3 Consultants",
+        "scope": "Design of a shared services centre for finance, HR administration and asset management reporting. Field crew productivity baselining across 40 sites."
+      },
+      "outcome": {
+        "status": "WON",
+        "results": "Shared services centre live in 7 months. Field crew productive hours up 12 percent.",
+        "client_satisfaction": "8/10"
+      },
+      "win_themes": [
+        "Shared services scoped around reporting cycles rather than org charts",
+        "Field productivity baselined with crews present, which removed the usual disputes about the data"
+      ],
+      "reusable_assets": ["Shared-services scoping framework", "Field productivity baselining method"],
+      "ai_use_permitted": true,
+      "msa_note": "Standard terms."
+    }
+  ]
+}
