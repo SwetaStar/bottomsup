@@ -119,7 +119,7 @@ export type ScoredRecord = {
 
 export type SelectedRecord = ScoredRecord & {
   record: Engagement;
-  reason: RetrieveReason;
+  reason: RetrieveReason | null; // null if the grounded narrative call failed
 };
 
 export type RetrieveResult = {
