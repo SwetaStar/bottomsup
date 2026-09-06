@@ -4,81 +4,94 @@
 Runs on a shared free-tier model, so treat any RFP you paste as non-confidential.
 All client and engagement data is fictional.
 
-A fuller, illustrated version of this guide:
+Illustrated version of this guide:
 https://claude.ai/code/artifact/3b6c014e-7d5d-4b46-b4d5-908186f6d20c
 
 ---
 
 ## What it does
 
-An RFP lands. The agent parses it, scores it against VCG's six pursuit criteria,
-then **stops for a practice partner**. Only after a human approves does it
-retrieve comparable past engagements by vector similarity, draft a fully-sourced
-outline, and run a deterministic confidentiality gate that can refuse to release
-the draft. It does not bid, price, or send anything.
+An RFP arrives. The agent parses it, scores it against VCG's six pursuit
+criteria, then **stops for a practice partner**. Only after a human approves does
+it retrieve comparable past engagements by vector similarity, draft a
+fully-sourced outline, and run a deterministic confidentiality gate that can
+refuse to release the draft. It does not bid, price, or send anything.
 
-## The one rule
+## The screen
 
-After the scorecard appears, the agent has made **no further calls** — nothing
-retrieved, drafted, or checked. It is waiting at **HA1 GATE**. Type a name and
-click **Approve** to continue, or **Decline** to stop for good. This is not a
-timed pause; the next step is never issued until the button is pressed.
+One page, seven horizontal tabs — no long scrolling. The tabs are the pipeline;
+each carries a status dot (grey = not run, gold pulse = running, olive = done,
+red = blocked) and advances on its own. You can click back to any completed tab
+to review it. Every tab has a **What / Why / How** band at the top.
 
-## Run it, step by step (~1 minute)
+`Setup → 1 Parse → 2 Qualify → Approval (gate) → 3 Retrieve → 4 Draft → Gate (gate)`
 
-1. **Load an RFP** — click `Load sample RFP`, or paste your own text (min ~20 chars).
-2. **Pick the client** — dropdown of known client ids, or leave on *New / other
-   client…* and type one. The sample loads with `CLI-MERIDIAN-NEW`.
-3. **Click Run Agent** — Intake, Parse, Qualify turn green; the Parsed RFP and
-   Qualification scorecard panels fill in.
-4. **Read the scorecard** — six criteria with weight, score, contribution and
-   evidence; a weighted total; a recommendation (`PURSUE` / `PURSUE WITH
-   CONDITIONS` / `DECLINE`). The pipeline is now stopped.
-5. **Approve or decline** — in the *AWAITING PRACTICE PARTNER APPROVAL* card,
-   type your name (buttons stay disabled until you do), then click **Approve**.
-   It records "Approved by [name] at [timestamp]".
-6. **Watch retrieval, draft, gate** — Retrieve ranks all 12 engagements and picks
-   the top 3 eligible; Draft writes an outline with a source chip on every line;
-   **DP3 GATE** returns `PASS`, `PASS WITH REVIEW`, or `BLOCKED`.
+## Run it
 
-## The six output panels
+1. **Setup** — pick one of the five prepared RFPs (each card says what to expect),
+   or click *Paste a different RFP instead*. The client id fills in from the
+   preset; change it if you want. Click **Run qualification →**.
+2. **Parse / Qualify** run, then the pipeline **stops** at **Approval**.
+3. **Qualify** tab — read the scorecard (see below), then go to **Approval**.
+4. **Approval** — type your name (buttons stay disabled until you do), then
+   **Approve** or **Decline**. Approve records "Approved by [name] at [time]".
+5. **Retrieve / Draft / Gate** run. The **Gate** tab shows the verdict.
 
-| Panel | Stage | What's in it |
-|---|---|---|
-| Parsed RFP | 2 | RFP as structured fields; mandatory requirements M1–M5 |
-| Qualification scorecard | 3 · DP1 | 6 criteria scored 1–5, `contribution = score × weight`, weighted total, escalations |
-| Practice partner approval | HA1 | The halt — recommendation, score, name field, decision record |
-| Retrieval | 4 | All 12 engagements ranked by cosine similarity; top 3 highlighted; MSA-restricted records shown struck through |
-| Draft outline | 5 | Sourced outline; every claim has a chip (`ENG-001`, `RFP`, or red `UNSOURCED`) |
-| Confidentiality gate | DP3 | Three code checks, no model; status + flags |
+## The Qualify tab — every number is explained
+
+- Three tiles: **weighted total** (out of 5, with tick marks at the conditional
+  ≥ 2.8 and pursue ≥ 3.6 thresholds), the **recommendation**, and how many of the
+  four **escalation** rules fired.
+- **How the total is built** — a single bar split into the six criteria's
+  contributions, so you can see which criteria carry the score.
+- One card per criterion, showing: its **weight**; the **score** (1–5) as pips;
+  the **benchmark** it was graded against (VCG's own anchor text for that band);
+  **why this score**; the **evidence** quote; and the arithmetic
+  `score × weight = contribution` with a bar.
+- All four **escalation rules** listed — triggered (▲, red) or clear (✓). A
+  triggered escalation overrides the score.
+
+## The Gate tab — DP3, deterministic
+
+Shows the verdict (`PASS` / `PASS WITH REVIEW` / `BLOCKED`) and then **all three
+checks**, pass or fail, each with the question it asked and what it found:
+
+1. **Client permission** — is the client's contract on file, and does it permit
+   AI tooling? Unknown client → REVIEW. Contract forbids it → BLOCK.
+2. **Cross-client contamination** — does the draft build on any past engagement
+   whose contract bars AI tooling? → BLOCK if so.
+3. **Unsourced claims** — any line marked `UNSOURCED`? → REVIEW if so.
+
+No model call runs here. A rule a model enforces can be talked past by text in
+its input; a rule in code cannot.
+
+## The five prepared RFPs
+
+| RFP | Where it lands |
+|---|---|
+| **Meridian Health Systems** | Core sector, clean scope, good budget → high score, **pursue**. New client → gate returns **PASS WITH REVIEW**. |
+| **Brightfold Retail** | Retail is an *adjacent* sector, so sector-fit is capped mid-range → borderline, **pursue with conditions**. |
+| **Kestrel Diagnostics** | Work fits, but the RFP demands unlimited liability and a below-benchmark price → **escalation rules fire** and override the score. |
+| **Pinnacle Legal Advisory** | Litigation support / clinical protocol design are outside VCG capability; ₹15 lakh is below profitable delivery → low total, **decline**. |
+| **Vela Financial Services** | Strong on the scorecard — core sector, clean scope. But Vela's 2021 MSA forbids AI tooling → the gate returns **BLOCKED**, draft withheld. |
 
 ## Three things to try
 
-| Scenario | Setup | Result |
+| Scenario | Do | Result |
 |---|---|---|
-| **Clean run** | sample RFP, `CLI-MERIDIAN-NEW`, Approve | Runs end to end. `PASS WITH REVIEW` + `MSA-UNKNOWN` (new client, no contract on file). |
-| **Decline** | same, click Decline at the gate | "Pursuit declined. No further partner time consumed." Open the network tab first — no retrieve/draft/check request is ever sent. |
-| **Block** | sample RFP, client `CLI-VELA`, Approve | `BLOCKED` + `MSA-PROHIBITED` — Vela's 2021 MSA forbids third-party automated processing. Draft withheld. The gate is code, not a prompt; no RFP wording talks past it. |
-
-## Gate outcomes
-
-- **PASS** — no flags; cleared for partner review.
-- **PASS WITH REVIEW** — no blockers, but a flag needs a human eye
-  (`MSA-UNKNOWN`, `UNSOURCED-CLAIMS`). Draft shown.
-- **BLOCKED** — client contract prohibits AI tooling (`MSA-PROHIBITED`), or the
-  draft cites an engagement whose contract does (`CROSS-CLIENT-RESTRICTED`).
-  Draft withheld and escalated.
+| **Clean run** | Meridian, Approve | End to end. Draft has a source chip on every line. Gate = PASS WITH REVIEW. |
+| **Decline** | Meridian, click Decline at Approval | "Pursuit declined. No further partner time consumed." Open the network tab — no retrieve/draft/check request is sent. |
+| **Block** | Vela, Approve | Gate = BLOCKED, `MSA-PROHIBITED`, draft withheld. Deterministic — no RFP wording talks past it. |
 
 ## If something looks wrong
 
-- **Red stage, "quota" message** — the free-tier model has a daily request cap.
-  Wait for reset, or set `GEMINI_MODEL` in the Vercel project to another model.
-  Re-run from the top.
-- **Score just above threshold but recommendation is PURSUE WITH CONDITIONS** —
-  the model being conservative when real conditions exist. Flows through normally.
-- **Weighted total moves a little between runs** — temperature is low, not zero.
-  The recommendation is stable; the number can shift a tenth or two.
-- **Run Agent greyed out** — needs ~20+ chars of RFP text and a client id.
+- **A tab dot turns red with a "quota" message** — the free-tier model has a
+  daily cap. Wait for the reset, or set `GEMINI_MODEL` in the Vercel project to
+  another model. Reset and re-run.
+- **The weighted total moves a little between runs** — temperature is low, not
+  zero. The recommendation is stable; the number can shift a tenth or two.
+- **Run qualification is greyed out** — you need ~20+ chars of RFP text and a
+  client id.
 - **Nothing happens after Approve** — the name field must have text.
 
 ## Under the hood
@@ -87,6 +100,4 @@ One Next.js app. Five pipeline steps are separate server routes called in
 sequence (`/api/parse`, `/api/score`, `/api/retrieve`, `/api/draft`,
 `/api/check`). Reasoning: `gemini-3.5-flash-lite`. Retrieval embeds the 12-record
 library with `gemini-embedding-001` and ranks by cosine similarity in memory — no
-database. The API key is server-side only. `/api/check` has no model call — three
-comparisons in code, because a rule enforced by a model can be overridden by text
-in its input and a rule enforced by code cannot.
+database. The API key is server-side only. `/api/check` makes no model call.
