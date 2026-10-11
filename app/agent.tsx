@@ -1702,40 +1702,153 @@ function srcTone(s: string) {
   return /UNSOURCED/i.test(s || "") ? "unsourced" : "src";
 }
 
+function NumberedSection({
+  n,
+  title,
+  children,
+}: {
+  n: number;
+  title: string;
+  children: ReactNode;
+}) {
+  return (
+    <Card>
+      <div className="flex items-baseline gap-2">
+        <span
+          className="grid h-5 w-5 shrink-0 place-items-center rounded-full font-mono text-[11px] font-bold text-white"
+          style={{ background: "var(--olive-deep)" }}
+        >
+          {n}
+        </span>
+        <h3 className="text-[14px] font-bold">{title}</h3>
+      </div>
+      <div className="mt-3 space-y-3">{children}</div>
+    </Card>
+  );
+}
+
+function Field({ label, text }: { label: string; text?: string }) {
+  if (!text) return null;
+  return (
+    <div>
+      <SectionLabel>{label}</SectionLabel>
+      <p className="text-[13.5px]">{text}</p>
+    </div>
+  );
+}
+
+function SourcedList({
+  items,
+}: {
+  items: { text: string; source: string }[];
+}) {
+  return (
+    <ul className="space-y-1 text-[13.5px]">
+      {items.map((it, i) => (
+        <li key={i} className="flex flex-wrap items-start gap-2">
+          <span className="flex-1">{it.text}</span>
+          <Chip tone={srcTone(it.source)}>{it.source}</Chip>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 function DraftPanel({ draft, withheld }: { draft: Draft; withheld: boolean }) {
   return (
     <div className="space-y-3 pb-4">
       {withheld && (
         <div
-          className="rounded-lg border-2 px-4 py-3 text-[13px] font-bold uppercase tracking-wide"
+          className="rounded-lg border-2 px-4 py-3 text-[14px] font-bold uppercase tracking-wide"
           style={{ borderColor: "var(--block)", background: "var(--block-bg)", color: "var(--block)" }}
         >
           Draft withheld — the gate blocked release. Shown here for the reviewing
           partner only.
         </div>
       )}
-      <div className={withheld ? "pointer-events-none opacity-45" : ""}>
-        <Card>
-          <SectionLabel>Executive summary</SectionLabel>
-          <p className="text-[14px]">{draft.executive_summary}</p>
+      <div className={`space-y-3 ${withheld ? "pointer-events-none opacity-45" : ""}`}>
+        {draft.lead_department && (
+          <div
+            className="flex flex-wrap items-center gap-2 rounded-lg border-2 px-4 py-2.5"
+            style={{ borderColor: "var(--olive-deep)", background: "var(--mint)" }}
+          >
+            <span
+              className="font-mono text-[10.5px] font-semibold uppercase tracking-wider"
+              style={{ color: "var(--olive-deep)" }}
+            >
+              Lead department
+            </span>
+            <span className="text-[13.5px] font-bold">{draft.lead_department.name}</span>
+            <span className="text-[12.5px]" style={{ color: "var(--muted)" }}>
+              — {draft.lead_department.reasoning}
+            </span>
+            <Chip tone={srcTone(draft.lead_department.source)}>
+              {draft.lead_department.source}
+            </Chip>
+          </div>
+        )}
+        <NumberedSection n={1} title="Cover page & cover letter">
+          <div className="flex flex-wrap items-center justify-between gap-2 text-[13.5px]">
+            <span>
+              <strong>{draft.cover?.firm_name}</strong> → {draft.cover?.client_name}
+            </span>
+            <span className="font-mono text-[12px]" style={{ color: "var(--faint)" }}>
+              {draft.cover?.reference} · {draft.cover?.date}
+            </span>
+          </div>
+          <Field label="The pitch" text={draft.cover?.pitch} />
+          {draft.cover?.logo_note && (
+            <p
+              className="rounded-md border border-dashed px-3 py-2 text-[12.5px] italic"
+              style={{ borderColor: "var(--line)", color: "var(--faint)" }}
+            >
+              {draft.cover.logo_note}
+            </p>
+          )}
+          {draft.cover?.source && (
+            <Chip tone={srcTone(draft.cover.source)}>{draft.cover.source}</Chip>
+          )}
+        </NumberedSection>
 
-          <SectionLabel>
-            <span className="mt-4 block">Win themes</span>
-          </SectionLabel>
-          <ul className="space-y-1 text-[13.5px]">
-            {(draft.win_themes ?? []).map((w, i) => (
-              <li key={i} className="flex flex-wrap items-center gap-2">
-                <span>{w.theme}</span>
-                <Chip tone={srcTone(w.evidence_source)}>{w.evidence_source}</Chip>
-              </li>
-            ))}
-          </ul>
+        <NumberedSection n={2} title="Executive summary">
+          <Field label="Current state" text={draft.executive_summary?.current_state} />
+          <Field label="Risks of inaction" text={draft.executive_summary?.risks_of_inaction} />
+          <Field label="Future state" text={draft.executive_summary?.future_state} />
+          <Field label="Why VCG" text={draft.executive_summary?.why_us} />
+          {draft.executive_summary?.source && (
+            <Chip tone={srcTone(draft.executive_summary.source)}>
+              {draft.executive_summary.source}
+            </Chip>
+          )}
+        </NumberedSection>
 
-          <SectionLabel>
-            <span className="mt-4 block">Proposed approach</span>
-          </SectionLabel>
+        <NumberedSection n={3} title="Understanding of the brief & scope assessment">
+          <Field label="Root-cause diagnostic" text={draft.understanding?.root_cause_diagnostic} />
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div>
+              <SectionLabel>In scope</SectionLabel>
+              <SourcedList
+                items={(draft.understanding?.in_scope ?? []).map((x) => ({
+                  text: x.item,
+                  source: x.source,
+                }))}
+              />
+            </div>
+            <div>
+              <SectionLabel>Out of scope</SectionLabel>
+              <SourcedList
+                items={(draft.understanding?.out_of_scope ?? []).map((x) => ({
+                  text: x.item,
+                  source: x.source,
+                }))}
+              />
+            </div>
+          </div>
+        </NumberedSection>
+
+        <NumberedSection n={4} title="Consulting methodology & frameworks">
           <div className="space-y-1.5">
-            {(draft.proposed_approach ?? []).map((p, i) => (
+            {(draft.methodology?.phases ?? []).map((p, i) => (
               <div
                 key={i}
                 className="rounded-md border p-2 text-[13.5px]"
@@ -1746,6 +1859,7 @@ function DraftPanel({ draft, withheld }: { draft: Draft; withheld: boolean }) {
                   <span className="font-mono text-[12px]" style={{ color: "var(--faint)" }}>
                     {p.weeks}
                   </span>
+                  {p.department && <Chip tone="neutral">{p.department}</Chip>}
                   <Chip tone={srcTone(p.source)}>{p.source}</Chip>
                 </div>
                 <p className="mt-1" style={{ color: "var(--muted)" }}>
@@ -1757,54 +1871,169 @@ function DraftPanel({ draft, withheld }: { draft: Draft; withheld: boolean }) {
               </div>
             ))}
           </div>
-
-          <SectionLabel>
-            <span className="mt-4 block">Team</span>
-          </SectionLabel>
-          <ul className="space-y-1 text-[13.5px]">
-            {(draft.team ?? []).map((t, i) => (
-              <li key={i} className="flex flex-wrap items-center gap-2">
-                <span>
-                  {t.role}: <strong>{t.named_individual}</strong> ({t.allocation})
-                </span>
-                <Chip tone={srcTone(t.source)}>{t.source}</Chip>
-              </li>
-            ))}
-          </ul>
-
-          <SectionLabel>
-            <span className="mt-4 block">Credentials to cite</span>
-          </SectionLabel>
-          <ul className="space-y-1 text-[13.5px]">
-            {(draft.credentials_to_cite ?? []).map((c, i) => (
-              <li key={i} className="flex flex-wrap items-center gap-2">
-                <span>{c.credential}</span>
-                <Chip tone={srcTone(c.source)}>{c.source}</Chip>
-              </li>
-            ))}
-          </ul>
-
-          <SectionLabel>
-            <span className="mt-4 block">Commercial recommendation</span>
-          </SectionLabel>
-          <div className="text-[13.5px]">
-            <div className="flex flex-wrap items-center gap-2">
-              <span>{draft.commercial_recommendation?.structure}</span>
-              <span className="font-mono text-[12px]">
-                {draft.commercial_recommendation?.indicative_fee}
-              </span>
-              <Chip tone={srcTone(draft.commercial_recommendation?.source ?? "")}>
-                {draft.commercial_recommendation?.source}
-              </Chip>
+          {(draft.methodology?.toolkits?.length ?? 0) > 0 && (
+            <div>
+              <SectionLabel>Toolkits & frameworks</SectionLabel>
+              <ul className="space-y-1 text-[13.5px]">
+                {draft.methodology.toolkits.map((t, i) => (
+                  <li key={i} className="flex flex-wrap items-center gap-2">
+                    <strong>{t.name}</strong>
+                    <span style={{ color: "var(--muted)" }}>— {t.use}</span>
+                    <Chip tone={srcTone(t.source)}>{t.source}</Chip>
+                  </li>
+                ))}
+              </ul>
             </div>
-            <p className="mt-1" style={{ color: "var(--muted)" }}>
-              Margin check: {draft.commercial_recommendation?.margin_check}
-            </p>
-          </div>
+          )}
+        </NumberedSection>
 
-          <SectionLabel>
-            <span className="mt-4 block">Sources used</span>
-          </SectionLabel>
+        <NumberedSection n={5} title="Deliverables & project timeline">
+          <div>
+            <SectionLabel>Milestones (text stand-in for a Gantt chart)</SectionLabel>
+            <ul className="space-y-1 text-[13.5px]">
+              {(draft.timeline?.milestones ?? []).map((m, i) => (
+                <li key={i} className="flex flex-wrap items-center gap-2">
+                  <span className="font-mono text-[12px]" style={{ color: "var(--faint)" }}>
+                    {m.when}
+                  </span>
+                  <span>{m.milestone}</span>
+                  <span className="text-[11.5px]" style={{ color: "var(--faint)" }}>
+                    ({m.phase})
+                  </span>
+                  <Chip tone={srcTone(m.source)}>{m.source}</Chip>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <SectionLabel>Concrete deliverables</SectionLabel>
+            <SourcedList
+              items={(draft.timeline?.deliverables ?? []).map((d) => ({
+                text: `${d.name} — ${d.description}`,
+                source: d.source,
+              }))}
+            />
+          </div>
+        </NumberedSection>
+
+        <NumberedSection n={6} title="Engagement team structure & bios">
+          <div>
+            <SectionLabel>Governance</SectionLabel>
+            <ul className="space-y-1 text-[13.5px]">
+              {(draft.team?.governance ?? []).map((g, i) => (
+                <li key={i} className="flex flex-wrap items-center gap-2">
+                  <span>
+                    {g.role}: <strong>{g.named_individual}</strong>
+                    {g.reports_to && (
+                      <span style={{ color: "var(--faint)" }}> → reports to {g.reports_to}</span>
+                    )}
+                  </span>
+                  {g.department && <Chip tone="neutral">{g.department}</Chip>}
+                  <Chip tone={srcTone(g.source)}>{g.source}</Chip>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="space-y-2">
+            <SectionLabel>Bios</SectionLabel>
+            {(draft.team?.bios ?? []).map((b, i) => (
+              <div key={i} className="rounded-md border p-2" style={{ borderColor: "var(--line-soft)" }}>
+                <div className="flex flex-wrap items-center gap-2">
+                  <strong className="text-[13.5px]">{b.name}</strong>
+                  <span className="text-[12px]" style={{ color: "var(--faint)" }}>
+                    {b.role} · {b.allocation}
+                  </span>
+                  <Chip tone={srcTone(b.source)}>{b.source}</Chip>
+                </div>
+                <p className="mt-1 text-[13.5px]" style={{ color: "var(--muted)" }}>
+                  {b.bio}
+                </p>
+              </div>
+            ))}
+          </div>
+        </NumberedSection>
+
+        <NumberedSection n={7} title="Qualifications, case studies & references">
+          <div className="space-y-2">
+            {(draft.case_studies ?? []).map((c, i) => (
+              <div key={i} className="rounded-md border p-2" style={{ borderColor: "var(--line-soft)" }}>
+                <div className="flex flex-wrap items-center gap-2">
+                  <strong className="text-[13.5px]">{c.client}</strong>
+                  <Chip tone={srcTone(c.source)}>{c.source}</Chip>
+                </div>
+                <div className="mt-1.5 grid gap-1 text-[13px] sm:grid-cols-[80px_1fr]">
+                  <span className="font-mono text-[10.5px] font-semibold uppercase tracking-wider" style={{ color: "var(--faint)" }}>
+                    Situation
+                  </span>
+                  <span>{c.situation}</span>
+                  <span className="font-mono text-[10.5px] font-semibold uppercase tracking-wider" style={{ color: "var(--faint)" }}>
+                    Action
+                  </span>
+                  <span>{c.action}</span>
+                  <span className="font-mono text-[10.5px] font-semibold uppercase tracking-wider" style={{ color: "var(--faint)" }}>
+                    Result
+                  </span>
+                  <span className="font-semibold">{c.result}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+          {draft.references_note && (
+            <p className="text-[12.5px] italic" style={{ color: "var(--faint)" }}>
+              {draft.references_note}
+            </p>
+          )}
+        </NumberedSection>
+
+        <NumberedSection n={8} title="Commercial proposal & pricing options">
+          <div className="space-y-1.5">
+            {(draft.commercial?.fee_options ?? []).map((f, i) => (
+              <div key={i} className="rounded-md border p-2 text-[13.5px]" style={{ borderColor: "var(--line-soft)" }}>
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="font-semibold">{f.structure}</span>
+                  <span className="font-mono text-[12px]">{f.indicative_fee}</span>
+                  <Chip tone={srcTone(f.source)}>{f.source}</Chip>
+                </div>
+                <p className="mt-1" style={{ color: "var(--muted)" }}>
+                  {f.detail}
+                </p>
+              </div>
+            ))}
+          </div>
+          <Field label="Out-of-pocket expenses policy" text={draft.commercial?.expenses_policy} />
+          <Field label="Margin check (38% floor)" text={draft.commercial?.margin_check} />
+          <p className="text-[12px]" style={{ color: "var(--faint)" }}>
+            requires_partner_approval: {String(draft.commercial?.requires_partner_approval)}
+          </p>
+        </NumberedSection>
+
+        <NumberedSection n={9} title="Risk management, assumptions & dependencies">
+          <div>
+            <SectionLabel>Client dependencies</SectionLabel>
+            <SourcedList
+              items={(draft.risks?.client_dependencies ?? []).map((d) => ({
+                text: d.item,
+                source: d.source,
+              }))}
+            />
+          </div>
+          <div>
+            <SectionLabel>Risk mitigations</SectionLabel>
+            <ul className="space-y-1 text-[13.5px]">
+              {(draft.risks?.mitigations ?? []).map((m, i) => (
+                <li key={i} className="flex flex-wrap items-start gap-2">
+                  <span className="flex-1">
+                    <strong>{m.risk}</strong> — {m.mitigation}
+                  </span>
+                  <Chip tone={srcTone(m.source)}>{m.source}</Chip>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </NumberedSection>
+
+        <Card>
+          <SectionLabel>Sources used</SectionLabel>
           <div className="flex flex-wrap gap-1.5">
             {(draft.sources_used ?? []).map((s, i) => (
               <Chip key={i} tone={srcTone(s)}>

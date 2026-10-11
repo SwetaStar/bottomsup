@@ -20,6 +20,12 @@
     "outside_capability": ["Clinical protocol design", "Litigation support", "Statutory audit"],
     "margin_floor": 0.38,
     "blended_day_rate_inr": 120000,
+    "departments": [
+      { "name": "Healthcare & Life Sciences Practice", "covers": "Healthcare provider engagements — operating model, patient flow, procurement" },
+      { "name": "Financial Services Practice", "covers": "Financial services engagements — shared services, operating model, risk" },
+      { "name": "Industrial & Public Sector Practice", "covers": "Industrial manufacturing and public sector engagements" },
+      { "name": "Cross-Sector Delivery & Shared Services", "covers": "Adjacent-sector engagements (retail, logistics, energy and utilities) and firm-wide delivery support — PMO, data analysis, knowledge management" }
+    ],
     "partners_available": [
       { "name": "R. Iyer", "years": 14, "focus": "Healthcare operations", "availability": "40%" },
       { "name": "S. Menon", "years": 11, "focus": "Procurement and shared services", "availability": "60%" },

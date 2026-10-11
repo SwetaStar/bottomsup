@@ -53,6 +53,7 @@ export type Criteria = {
     outside_capability: string[];
     margin_floor: number;
     blended_day_rate_inr: number;
+    departments: { name: string; covers: string }[];
     partners_available: {
       name: string;
       years: number;
@@ -133,30 +134,118 @@ export type RetrieveResult = {
 };
 
 // ---- Stage 4: /api/draft ----
+// Nine-section consulting RFP response structure. Every leaf fact still
+// carries a `source` (an engagement id such as ENG-001, "RFP", or
+// "UNSOURCED — partner to verify") — DP3's CHECK-3 scans the whole object
+// for that literal string regardless of shape, so this restructure needs no
+// change there.
 export type Draft = {
-  executive_summary: string;
-  win_themes: { theme: string; evidence_source: string }[];
-  proposed_approach: {
-    phase: string;
-    weeks: string;
-    activities: string;
-    output: string;
+  // Which VCG practice/department owns this engagement — chosen from
+  // criteria.firm_context.departments, not invented. Surfaced as its own
+  // top-level field (not buried in cover) since it's the answer to a
+  // specific partner question: "who does this land on?"
+  lead_department: { name: string; reasoning: string; source: string };
+
+  // 1. Cover page & cover letter
+  cover: {
+    client_name: string;
+    firm_name: string;
+    reference: string;
+    date: string;
+    pitch: string; // contextualises the client's challenge, positions VCG
+    logo_note: string; // honest placeholder — this tool has no real logo assets
     source: string;
-  }[];
+  };
+
+  // 2. Executive summary — current vs. future state, and "why us"
+  executive_summary: {
+    current_state: string;
+    risks_of_inaction: string;
+    future_state: string;
+    why_us: string;
+    source: string;
+  };
+
+  // 3. Understanding of the brief & scope assessment
+  understanding: {
+    root_cause_diagnostic: string; // past the surface symptoms
+    in_scope: { item: string; source: string }[];
+    out_of_scope: { item: string; source: string }[];
+  };
+
+  // 4. Consulting methodology & frameworks
+  methodology: {
+    phases: {
+      phase:
+        | "Discovery & Assessment"
+        | "Analysis & Diagnostic"
+        | "Strategy & Recommendation"
+        | "Implementation Support / Enablement";
+      weeks: string;
+      activities: string;
+      output: string;
+      department: string; // which VCG department executes this phase
+      source: string;
+    }[];
+    toolkits: { name: string; use: string; source: string }[];
+  };
+
+  // 5. Deliverables & project timeline
+  timeline: {
+    // A text milestone table stands in for a visual Gantt chart — this tool
+    // produces a first-draft outline, not a formatted deliverable.
+    milestones: { milestone: string; when: string; phase: string; source: string }[];
+    deliverables: { name: string; description: string; source: string }[];
+  };
+
+  // 6. Engagement team structure & bios
   team: {
-    role: string;
-    named_individual: string;
-    allocation: string;
+    governance: {
+      role: string;
+      named_individual: string;
+      reports_to: string;
+      department: string; // which VCG department this role sits in
+      source: string;
+    }[];
+    bios: {
+      name: string;
+      role: string;
+      allocation: string;
+      bio: string; // ~2 short paragraphs, grounded in past-engagement evidence
+      source: string;
+    }[];
+  };
+
+  // 7. Qualifications, case studies & references
+  case_studies: {
+    // Situation-Action-Result, one per selected comparable engagement
+    client: string;
+    situation: string;
+    action: string;
+    result: string; // quantified where the record supports it
     source: string;
   }[];
-  credentials_to_cite: { credential: string; source: string }[];
-  commercial_recommendation: {
-    structure: string;
-    indicative_fee: string;
+  references_note: string; // never fabricate contact details — says so plainly
+
+  // 8. Commercial proposal & pricing options
+  commercial: {
+    fee_options: {
+      structure: "Time & Materials" | "Fixed Fee / Retainer" | "Value-Based / Success Fee";
+      detail: string;
+      indicative_fee: string;
+      source: string;
+    }[];
+    expenses_policy: string;
     margin_check: string;
-    source: string;
     requires_partner_approval: boolean;
   };
+
+  // 9. Risk management, assumptions & dependencies
+  risks: {
+    client_dependencies: { item: string; source: string }[];
+    mitigations: { risk: string; mitigation: string; source: string }[];
+  };
+
   sources_used: string[];
   open_questions_for_partner: string[];
 };

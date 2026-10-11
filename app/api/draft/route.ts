@@ -1,6 +1,8 @@
-// Stage 4 — Draft. POST { rfp, selected } -> proposal outline, a source on
-// every claim. Larger token budget than the other routes (SPEC), bumped for
-// gemini-3.6-flash reasoning overhead. Runs only after HA1 approval.
+// Stage 4 — Draft. POST { rfp, selected } -> nine-section proposal outline
+// (cover, executive summary, understanding/scope, methodology, timeline,
+// team, case studies, commercial, risks), a source on every claim. Larger
+// token budget than the other routes — this is the richest output in the
+// pipeline. Runs only after HA1 approval.
 
 import { callGemini } from "@/lib/gemini";
 import { safeParseJSON } from "@/lib/json";
@@ -36,12 +38,12 @@ export async function POST(request: Request) {
         JSON.stringify(selected, null, 2),
         JSON.stringify(criteria.firm_context, null, 2)
       ),
-      maxOutputTokens: 8000,
+      maxOutputTokens: 12000,
     });
     const draft = safeParseJSON<Draft>(raw);
 
-    if (draft.commercial_recommendation) {
-      draft.commercial_recommendation.requires_partner_approval = true;
+    if (draft.commercial) {
+      draft.commercial.requires_partner_approval = true;
     }
 
     return Response.json(draft);
