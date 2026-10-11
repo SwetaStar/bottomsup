@@ -139,11 +139,11 @@ function Chip({
   strike?: boolean;
 }) {
   const styles: Record<string, CSSProperties> = {
-    src: { background: "#eef4f8", color: "var(--sky-deep)", borderColor: "#cfe0ea" },
+    src: { background: "#f1ecd2", color: "var(--sky-deep)", borderColor: "#d9cba0" },
     unsourced: {
       background: "var(--block-bg)",
       color: "var(--block)",
-      borderColor: "#e6c3bd",
+      borderColor: "#debab2",
     },
     neutral: {
       background: "var(--line-soft)",
@@ -153,7 +153,7 @@ function Chip({
   };
   return (
     <span
-      className="inline-block rounded border px-1.5 py-0.5 font-mono text-[11px] leading-none"
+      className="inline-block rounded border px-1.5 py-0.5 font-mono text-[12px] leading-none"
       style={{
         ...(styles[tone ?? "src"] as CSSProperties),
         textDecoration: strike ? "line-through" : undefined,
@@ -200,7 +200,7 @@ function Explain({ tab }: { tab: TabId }) {
   const e = EXPLAIN[tab];
   return (
     <div
-      className="mb-4 grid gap-x-6 gap-y-1.5 rounded-lg border px-4 py-3 text-[12.5px] sm:grid-cols-3"
+      className="mb-4 grid gap-x-6 gap-y-1.5 rounded-lg border px-4 py-3 text-[13.5px] sm:grid-cols-3"
       style={{ background: "var(--card)", borderColor: "var(--line)" }}
     >
       {(
@@ -212,7 +212,7 @@ function Explain({ tab }: { tab: TabId }) {
       ).map(([k, v]) => (
         <div key={k}>
           <span
-            className="mr-1.5 font-mono text-[10px] font-semibold uppercase tracking-wider"
+            className="mr-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider"
             style={{ color: "var(--sky-deep)" }}
           >
             {k}
@@ -227,7 +227,7 @@ function Explain({ tab }: { tab: TabId }) {
 function Placeholder({ children }: { children: ReactNode }) {
   return (
     <div
-      className="rounded-lg border border-dashed p-8 text-center text-[13px]"
+      className="rounded-lg border border-dashed p-8 text-center text-[14px]"
       style={{ borderColor: "var(--line)", color: "var(--faint)" }}
     >
       {children}
@@ -249,7 +249,7 @@ function Card({ children, pad = true }: { children: ReactNode; pad?: boolean }) 
 function SectionLabel({ children }: { children: ReactNode }) {
   return (
     <p
-      className="mb-2 font-mono text-[10px] font-semibold uppercase tracking-[0.14em]"
+      className="mb-2 font-mono text-[11px] font-semibold uppercase tracking-[0.14em]"
       style={{ color: "var(--faint)" }}
     >
       {children}
@@ -517,14 +517,14 @@ export default function Agent({
       >
         <div className="flex items-center gap-3">
           <div
-            className="grid h-8 w-8 place-items-center rounded-md font-mono text-[13px] font-bold text-white"
+            className="grid h-8 w-8 place-items-center rounded-md font-mono text-[14px] font-bold text-white"
             style={{ background: "var(--btn)" }}
           >
             V
           </div>
           <div className="leading-tight">
-            <p className="text-[14px] font-bold">VCG Proposal Agent</p>
-            <p className="text-[11px]" style={{ color: "var(--faint)" }}>
+            <p className="text-[15px] font-bold">VCG Proposal Agent</p>
+            <p className="text-[12px]" style={{ color: "var(--faint)" }}>
               Qualify → a partner approves → retrieve · draft · confidentiality gate
             </p>
           </div>
@@ -535,7 +535,7 @@ export default function Agent({
             reset();
             setActive("setup");
           }}
-          className="rounded-md border px-3 py-1.5 text-[12.5px] font-medium"
+          className="rounded-md border px-3 py-1.5 text-[13.5px] font-medium"
           style={{ borderColor: "var(--line)", color: "var(--muted)" }}
         >
           Reset
@@ -565,7 +565,7 @@ export default function Agent({
               type="button"
               disabled={!enabled}
               onClick={() => enabled && setActive(t.id)}
-              className="flex shrink-0 items-center gap-2 rounded-md px-3 py-1.5 text-[12.5px] font-medium transition-colors disabled:opacity-40"
+              className="flex shrink-0 items-center gap-2 rounded-md px-3 py-1.5 text-[13.5px] font-medium transition-colors disabled:opacity-40"
               style={{
                 background: isActive ? "var(--mint)" : "transparent",
                 color: isActive ? "var(--ink)" : "var(--muted)",
@@ -582,14 +582,14 @@ export default function Agent({
                 style={{ background: dot }}
               />
               {t.step && (
-                <span className="font-mono text-[10px]" style={{ color: "var(--faint)" }}>
+                <span className="font-mono text-[11px]" style={{ color: "var(--faint)" }}>
                   {t.step}
                 </span>
               )}
               <span>{t.label}</span>
               {t.gate && (
                 <span
-                  className="font-mono text-[9px] uppercase tracking-wider"
+                  className="font-mono text-[10.5px] uppercase tracking-wider"
                   style={{ color: "var(--faint)" }}
                 >
                   gate
@@ -606,16 +606,16 @@ export default function Agent({
           <Explain tab={active} />
           {error && error.tab === active && (
             <div
-              className="mb-3 flex flex-wrap items-center gap-3 rounded-md border px-3 py-2 text-[12.5px]"
+              className="mb-3 flex flex-wrap items-center gap-3 rounded-md border px-3 py-2 text-[13.5px]"
               style={{
-                borderColor: "#e6c3bd",
+                borderColor: "#debab2",
                 background: "var(--block-bg)",
                 color: "var(--block)",
               }}
             >
               <span className="flex-1">
                 {error.message}
-                <span className="block text-[11px]" style={{ color: "var(--block)" }}>
+                <span className="block text-[12px]" style={{ color: "var(--block)" }}>
                   Usually a transient hiccup, not a problem with the RFP or
                   the decision made — safe to retry.
                 </span>
@@ -624,7 +624,7 @@ export default function Agent({
                 type="button"
                 onClick={retry}
                 disabled={busy}
-                className="shrink-0 rounded-md border px-3 py-1.5 text-[12px] font-semibold disabled:opacity-40"
+                className="shrink-0 rounded-md border px-3 py-1.5 text-[13px] font-semibold disabled:opacity-40"
                 style={{ borderColor: "var(--block)", color: "var(--block)" }}
               >
                 Retry
@@ -768,9 +768,9 @@ function SetupPanel(props: {
                 }}
               >
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-[13px] font-bold">{s.label}</span>
+                  <span className="text-[14px] font-bold">{s.label}</span>
                   <span
-                    className="font-mono text-[11px]"
+                    className="font-mono text-[12px]"
                     style={{ color: "var(--muted)" }}
                   >
                     {s.budget}
@@ -778,27 +778,27 @@ function SetupPanel(props: {
                 </div>
                 <div className="mt-1 flex flex-wrap items-center gap-1.5">
                   <span
-                    className="rounded px-1.5 py-0.5 text-[10.5px] font-medium"
-                    style={{ background: "#eef4f8", color: "var(--sky-deep)" }}
+                    className="rounded px-1.5 py-0.5 text-[11.5px] font-medium"
+                    style={{ background: "#f1ecd2", color: "var(--sky-deep)" }}
                   >
                     {s.sector}
                   </span>
                   <span
-                    className="font-mono text-[10.5px]"
+                    className="font-mono text-[11.5px]"
                     style={{ color: "var(--faint)" }}
                   >
                     {s.clientId}
                   </span>
                 </div>
-                <p className="mt-1.5 text-[12px]" style={{ color: "var(--muted)" }}>
+                <p className="mt-1.5 text-[13px]" style={{ color: "var(--muted)" }}>
                   {s.blurb}
                 </p>
                 <p
-                  className="mt-1.5 border-t pt-1.5 text-[11.5px]"
+                  className="mt-1.5 border-t pt-1.5 text-[12.5px]"
                   style={{ borderColor: "var(--line-soft)", color: "var(--faint)" }}
                 >
                   <span
-                    className="font-mono text-[9.5px] font-semibold uppercase tracking-wider"
+                    className="font-mono text-[10.5px] font-semibold uppercase tracking-wider"
                     style={{ color: "var(--olive-deep)" }}
                   >
                     Expect ·{" "}
@@ -815,7 +815,7 @@ function SetupPanel(props: {
         <button
           type="button"
           onClick={() => setUseCustom(!useCustom)}
-          className="text-[12px] font-medium underline"
+          className="text-[13px] font-medium underline"
           style={{ color: "var(--sky-deep)" }}
         >
           {useCustom ? "← Use a prepared RFP" : "Paste a different RFP instead"}
@@ -826,7 +826,7 @@ function SetupPanel(props: {
             onChange={(e) => setCustomText(e.target.value)}
             rows={8}
             placeholder="Paste RFP text here…"
-            className="mt-2 w-full resize-y rounded-lg border p-3 font-mono text-[12px] leading-relaxed outline-none"
+            className="mt-2 w-full resize-y rounded-lg border p-3 font-mono text-[13px] leading-relaxed outline-none"
             style={{ borderColor: "var(--line)", background: "var(--card)" }}
           />
         )}
@@ -839,7 +839,7 @@ function SetupPanel(props: {
             <select
               value={clientMode}
               onChange={(e) => setClientMode(e.target.value)}
-              className="rounded-md border px-2 py-2 text-[13px] outline-none"
+              className="rounded-md border px-2 py-2 text-[14px] outline-none"
               style={{ borderColor: "var(--line)", background: "var(--card)" }}
             >
               <option value="__new__">New / other client…</option>
@@ -854,7 +854,7 @@ function SetupPanel(props: {
                 value={freeClient}
                 onChange={(e) => setFreeClient(e.target.value)}
                 placeholder="CLI-…"
-                className="rounded-md border px-2 py-2 font-mono text-[13px] outline-none"
+                className="rounded-md border px-2 py-2 font-mono text-[14px] outline-none"
                 style={{ borderColor: "var(--line)", background: "var(--card)" }}
               />
             )}
@@ -864,18 +864,18 @@ function SetupPanel(props: {
           type="button"
           onClick={onRun}
           disabled={!canRun}
-          className="rounded-md px-4 py-2.5 text-[13px] font-semibold text-white transition-opacity disabled:opacity-40"
+          className="rounded-md px-4 py-2.5 text-[14px] font-semibold text-white transition-opacity disabled:opacity-40"
           style={{ background: "var(--btn)" }}
         >
           {busy ? "Running…" : "Run qualification →"}
         </button>
-        <span className="text-[11.5px]" style={{ color: "var(--faint)" }}>
+        <span className="text-[12.5px]" style={{ color: "var(--faint)" }}>
           for <span className="font-mono">{effectiveClientId || "—"}</span>
         </span>
       </div>
 
       <div
-        className="rounded-lg border p-3 text-[12px]"
+        className="rounded-lg border p-3 text-[13px]"
         style={{ borderColor: "var(--line)", background: "var(--card)", color: "var(--muted)" }}
       >
         <span className="font-semibold" style={{ color: "var(--ink)" }}>
@@ -898,12 +898,12 @@ function DefRow({ k, v }: { k: string; v: ReactNode }) {
   return (
     <div className="grid grid-cols-[150px_1fr] gap-3 border-b py-1.5 last:border-0" style={{ borderColor: "var(--line-soft)" }}>
       <span
-        className="font-mono text-[10px] font-semibold uppercase tracking-wider"
+        className="font-mono text-[11px] font-semibold uppercase tracking-wider"
         style={{ color: "var(--faint)" }}
       >
         {k}
       </span>
-      <span className="text-[13px]">{v ?? "—"}</span>
+      <span className="text-[14px]">{v ?? "—"}</span>
     </div>
   );
 }
@@ -912,7 +912,7 @@ function ParsePanel({ rfp }: { rfp: ParsedRFP }) {
   return (
     <Card>
       <DefRow k="Client" v={rfp.client_name} />
-      <DefRow k="Reference" v={<span className="font-mono text-[12px]">{rfp.reference}</span>} />
+      <DefRow k="Reference" v={<span className="font-mono text-[13px]">{rfp.reference}</span>} />
       <DefRow k="Sector" v={rfp.sector} />
       <DefRow k="Deadline" v={rfp.deadline} />
       <DefRow k="Start" v={rfp.engagement_start} />
@@ -1024,7 +1024,7 @@ function QualifyPanel({
             <button
               type="button"
               onClick={() => setWeights(defaultWeights)}
-              className="rounded-md border px-2.5 py-1 text-[11px] font-semibold"
+              className="rounded-md border px-2.5 py-1 text-[12px] font-semibold"
               style={{ borderColor: "var(--line)", color: "var(--sky-deep)" }}
             >
               Reset to VCG defaults
@@ -1037,7 +1037,7 @@ function QualifyPanel({
             const normPct = ((raw / weightSum) * 100).toFixed(0);
             return (
               <div key={c.id} className="grid grid-cols-[150px_1fr_52px] items-center gap-3">
-                <span className="truncate text-[12px]" title={c.name}>
+                <span className="truncate text-[13px]" title={c.name}>
                   {c.name}
                 </span>
                 <input
@@ -1052,14 +1052,14 @@ function QualifyPanel({
                   className="w-full accent-[var(--olive)]"
                   aria-label={`${c.name} weight`}
                 />
-                <span className="tnum text-right text-[12px] font-semibold">
+                <span className="tnum text-right text-[13px] font-semibold">
                   {normPct}%
                 </span>
               </div>
             );
           })}
         </div>
-        <p className="mt-3 text-[11px]" style={{ color: "var(--faint)" }}>
+        <p className="mt-3 text-[12px]" style={{ color: "var(--faint)" }}>
           Sliders re-normalise to 100% automatically, so they never need to add
           up by hand. This recalculates the arithmetic above instantly — it
           does not call the model again, and it does not change the
@@ -1071,12 +1071,12 @@ function QualifyPanel({
       {/* stat tiles */}
       <div className="grid gap-3 sm:grid-cols-3">
         <Card>
-          <p className="font-mono text-[10px] font-semibold uppercase tracking-wider" style={{ color: "var(--faint)" }}>
+          <p className="font-mono text-[11px] font-semibold uppercase tracking-wider" style={{ color: "var(--faint)" }}>
             Weighted total {isAdjusted && <span style={{ color: "var(--sky-deep)" }}>· adjusted</span>}
           </p>
           <p className="mt-1 tnum text-[30px] font-extrabold leading-none">
             {displayTotal.toFixed(2)}
-            <span className="text-[14px] font-medium" style={{ color: "var(--faint)" }}>
+            <span className="text-[15px] font-medium" style={{ color: "var(--faint)" }}>
               {" "}
               / 5.00
             </span>
@@ -1098,7 +1098,7 @@ function QualifyPanel({
               />
             ))}
           </div>
-          <p className="mt-1.5 text-[10.5px]" style={{ color: "var(--faint)" }}>
+          <p className="mt-1.5 text-[11.5px]" style={{ color: "var(--faint)" }}>
             ticks: conditional ≥ {criteria.thresholds.conditional} · pursue ≥{" "}
             {criteria.thresholds.pursue}
             {isAdjusted && (
@@ -1111,33 +1111,33 @@ function QualifyPanel({
           </p>
         </Card>
         <Card>
-          <p className="font-mono text-[10px] font-semibold uppercase tracking-wider" style={{ color: "var(--faint)" }}>
+          <p className="font-mono text-[11px] font-semibold uppercase tracking-wider" style={{ color: "var(--faint)" }}>
             Recommendation {isAdjusted && <span style={{ color: "var(--sky-deep)" }}>· adjusted</span>}
           </p>
           <span
-            className="mt-2 inline-block rounded-md px-2.5 py-1.5 text-[13px] font-bold"
+            className="mt-2 inline-block rounded-md px-2.5 py-1.5 text-[14px] font-bold"
             style={{ background: tone.bg, color: tone.fg }}
           >
             {displayRecommendation}
           </span>
-          <p className="mt-2 text-[11px]" style={{ color: "var(--faint)" }}>
+          <p className="mt-2 text-[12px]" style={{ color: "var(--faint)" }}>
             {isAdjusted
               ? `VCG official (published weights): ${score.recommendation}`
               : "a recommendation, not a decision"}
           </p>
         </Card>
         <Card>
-          <p className="font-mono text-[10px] font-semibold uppercase tracking-wider" style={{ color: "var(--faint)" }}>
+          <p className="font-mono text-[11px] font-semibold uppercase tracking-wider" style={{ color: "var(--faint)" }}>
             Escalations
           </p>
           <p className="mt-1 tnum text-[30px] font-extrabold leading-none">
             {score.escalations_triggered.length}
-            <span className="text-[14px] font-medium" style={{ color: "var(--faint)" }}>
+            <span className="text-[15px] font-medium" style={{ color: "var(--faint)" }}>
               {" "}
               / 4 triggered
             </span>
           </p>
-          <p className="mt-2 text-[11px]" style={{ color: "var(--faint)" }}>
+          <p className="mt-2 text-[12px]" style={{ color: "var(--faint)" }}>
             an escalation overrides the score — weights can&apos;t move it
           </p>
         </Card>
@@ -1150,7 +1150,7 @@ function QualifyPanel({
           {adjusted.map((c, i) => (
             <div
               key={c.id}
-              className="grid place-items-center border-r-2 text-[10px] font-semibold text-white"
+              className="grid place-items-center border-r-2 text-[11px] font-semibold text-white"
               style={{
                 width: `${(c.adjContribution / 5) * 100}%`,
                 background: i % 2 ? "var(--sky-deep)" : "var(--olive)",
@@ -1169,7 +1169,7 @@ function QualifyPanel({
             />
           ))}
         </div>
-        <div className="mt-1.5 flex justify-between text-[10.5px]" style={{ color: "var(--faint)" }}>
+        <div className="mt-1.5 flex justify-between text-[11.5px]" style={{ color: "var(--faint)" }}>
           <span>0.00</span>
           <span>
             sum = <span className="tnum font-semibold" style={{ color: "var(--ink)" }}>{displayTotal.toFixed(2)}</span>
@@ -1189,8 +1189,8 @@ function QualifyPanel({
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
                   <Chip tone="neutral">{c.id}</Chip>
-                  <span className="text-[13px] font-bold">{c.criterion}</span>
-                  <span className="text-[11px]" style={{ color: "var(--faint)" }}>
+                  <span className="text-[14px] font-bold">{c.criterion}</span>
+                  <span className="text-[12px]" style={{ color: "var(--faint)" }}>
                     weight {(c.adjWeight * 100).toFixed(0)}%
                     {isAdjusted && (
                       <span style={{ color: "var(--sky-deep)" }}>
@@ -1202,29 +1202,29 @@ function QualifyPanel({
                 </div>
                 <div className="flex items-center gap-2">
                   <Pips score={c.score} />
-                  <span className="tnum text-[12px] font-semibold">{c.score} / 5</span>
+                  <span className="tnum text-[13px] font-semibold">{c.score} / 5</span>
                 </div>
               </div>
 
-              <div className="mt-3 grid gap-2 text-[12.5px] sm:grid-cols-[110px_1fr]">
-                <span className="font-mono text-[10px] font-semibold uppercase tracking-wider" style={{ color: "var(--faint)" }}>
+              <div className="mt-3 grid gap-2 text-[13.5px] sm:grid-cols-[110px_1fr]">
+                <span className="font-mono text-[11px] font-semibold uppercase tracking-wider" style={{ color: "var(--faint)" }}>
                   Benchmark {a.band}
                 </span>
                 <span style={{ color: "var(--muted)" }}>{a.text}</span>
 
-                <span className="font-mono text-[10px] font-semibold uppercase tracking-wider" style={{ color: "var(--faint)" }}>
+                <span className="font-mono text-[11px] font-semibold uppercase tracking-wider" style={{ color: "var(--faint)" }}>
                   Why this score
                 </span>
                 <span>{c.reasoning}</span>
 
-                <span className="font-mono text-[10px] font-semibold uppercase tracking-wider" style={{ color: "var(--faint)" }}>
+                <span className="font-mono text-[11px] font-semibold uppercase tracking-wider" style={{ color: "var(--faint)" }}>
                   Evidence
                 </span>
                 <span className="italic" style={{ color: "var(--muted)" }}>
                   {c.evidence ? `“${c.evidence}”` : "—"}
                 </span>
 
-                <span className="font-mono text-[10px] font-semibold uppercase tracking-wider" style={{ color: "var(--faint)" }}>
+                <span className="font-mono text-[11px] font-semibold uppercase tracking-wider" style={{ color: "var(--faint)" }}>
                   Contribution
                 </span>
                 <span>
@@ -1251,9 +1251,9 @@ function QualifyPanel({
             return (
               <div
                 key={e.id}
-                className="flex gap-2 rounded-md border px-3 py-2 text-[12.5px]"
+                className="flex gap-2 rounded-md border px-3 py-2 text-[13.5px]"
                 style={{
-                  borderColor: hit ? "#e6c3bd" : "var(--line)",
+                  borderColor: hit ? "#debab2" : "var(--line)",
                   background: hit ? "var(--block-bg)" : "var(--card)",
                 }}
               >
@@ -1261,10 +1261,10 @@ function QualifyPanel({
                   {hit ? "▲" : "✓"}
                 </span>
                 <span>
-                  <span className="font-mono text-[11px] font-semibold">{e.id}</span>{" "}
+                  <span className="font-mono text-[12px] font-semibold">{e.id}</span>{" "}
                   {e.rule}
                   {hit?.detail && (
-                    <span className="block text-[11.5px]" style={{ color: "var(--block)" }}>
+                    <span className="block text-[12.5px]" style={{ color: "var(--block)" }}>
                       {hit.detail}
                     </span>
                   )}
@@ -1278,13 +1278,13 @@ function QualifyPanel({
       {/* rationale + conditions */}
       <Card>
         <SectionLabel>Rationale — for a partner with thirty seconds</SectionLabel>
-        <p className="text-[13px]">{score.rationale}</p>
+        <p className="text-[14px]">{score.rationale}</p>
         {score.conditions?.length > 0 && (
           <>
-            <p className="mt-3 font-mono text-[10px] font-semibold uppercase tracking-wider" style={{ color: "var(--faint)" }}>
+            <p className="mt-3 font-mono text-[11px] font-semibold uppercase tracking-wider" style={{ color: "var(--faint)" }}>
               Conditions
             </p>
-            <ul className="mt-1 list-disc space-y-0.5 pl-4 text-[12.5px]" style={{ color: "var(--muted)" }}>
+            <ul className="mt-1 list-disc space-y-0.5 pl-4 text-[13.5px]" style={{ color: "var(--muted)" }}>
               {score.conditions.map((x, i) => (
                 <li key={i}>{x}</li>
               ))}
@@ -1294,7 +1294,7 @@ function QualifyPanel({
       </Card>
 
       {/* default-weight basis, outside the interactive card */}
-      <p className="pt-1 text-[11px]" style={{ color: "var(--faint)" }}>
+      <p className="pt-1 text-[12px]" style={{ color: "var(--faint)" }}>
         Default weights — sector fit {(criteria.criteria.find((c) => c.id === "C1")?.weight ?? 0) * 100}%, capability
         fit {(criteria.criteria.find((c) => c.id === "C2")?.weight ?? 0) * 100}%, competitive
         position {(criteria.criteria.find((c) => c.id === "C3")?.weight ?? 0) * 100}%, commercial
@@ -1347,7 +1347,7 @@ function ApprovalPanel(props: {
   if (approvedBy) {
     return (
       <div
-        className="rounded-lg border p-5 text-[13px]"
+        className="rounded-lg border p-5 text-[14px]"
         style={{ borderColor: "var(--olive)", background: "var(--pass-bg)", color: "var(--pass)" }}
       >
         Approved by <strong>{approvedBy.name}</strong> at{" "}
@@ -1359,8 +1359,8 @@ function ApprovalPanel(props: {
   if (declined) {
     return (
       <div
-        className="rounded-lg border p-5 text-[13px]"
-        style={{ borderColor: "#e6c3bd", background: "var(--block-bg)", color: "var(--block)" }}
+        className="rounded-lg border p-5 text-[14px]"
+        style={{ borderColor: "#debab2", background: "var(--block-bg)", color: "var(--block)" }}
       >
         Pursuit declined. No further partner time consumed.
       </div>
@@ -1386,23 +1386,23 @@ function ApprovalPanel(props: {
   return (
     <div
       className="rounded-lg border-2 p-5"
-      style={{ borderColor: "var(--sky-deep)", background: "#f0f5f8" }}
+      style={{ borderColor: "var(--sky-deep)", background: "#f1ecd2" }}
     >
-      <p className="font-mono text-[11px] font-bold uppercase tracking-[0.18em]" style={{ color: "var(--sky-deep)" }}>
+      <p className="font-mono text-[12px] font-bold uppercase tracking-[0.18em]" style={{ color: "var(--sky-deep)" }}>
         Awaiting practice partner approval
       </p>
-      <p className="mt-3 text-[13px]">
+      <p className="mt-3 text-[14px]">
         Recommendation{" "}
-        <span className="rounded px-1.5 py-0.5 text-[12px] font-bold" style={{ background: tone.bg, color: tone.fg }}>
+        <span className="rounded px-1.5 py-0.5 text-[13px] font-bold" style={{ background: tone.bg, color: tone.fg }}>
           {score.recommendation}
         </span>{" "}
         · weighted score <span className="tnum font-semibold">{score.weighted_total.toFixed(2)}</span>
-        <span className="text-[12px]" style={{ color: "var(--faint)" }}>
+        <span className="text-[13px]" style={{ color: "var(--faint)" }}>
           {" "}
           / 5.00
         </span>
       </p>
-      <p className="mt-1.5 text-[12px]" style={{ color: "var(--muted)" }}>
+      <p className="mt-1.5 text-[13px]" style={{ color: "var(--muted)" }}>
         Six criteria, each scored 1–5 by the model and multiplied by VCG&apos;s
         published weight, summed to this one number. Full per-criterion detail
         is on the <span className="font-semibold">Qualify</span> tab — the
@@ -1411,7 +1411,7 @@ function ApprovalPanel(props: {
 
       {score.rationale && (
         <p
-          className="mt-3 rounded-md border-l-4 px-3 py-2 text-[12.5px] italic"
+          className="mt-3 rounded-md border-l-4 px-3 py-2 text-[13.5px] italic"
           style={{ borderColor: "var(--sky-deep)", background: "var(--card)", color: "var(--ink)" }}
         >
           “{score.rationale}”
@@ -1424,12 +1424,12 @@ function ApprovalPanel(props: {
           style={{ borderColor: "var(--olive)", background: "var(--pass-bg)" }}
         >
           <p
-            className="font-mono text-[10px] font-semibold uppercase tracking-wider"
+            className="font-mono text-[11px] font-semibold uppercase tracking-wider"
             style={{ color: "var(--pass)" }}
           >
             Basis to approve
           </p>
-          <ul className="mt-1.5 space-y-1 text-[12px]" style={{ color: "var(--ink)" }}>
+          <ul className="mt-1.5 space-y-1 text-[13px]" style={{ color: "var(--ink)" }}>
             <li>
               Weighted total {score.weighted_total.toFixed(2)}{" "}
               {clearsPursue
@@ -1458,12 +1458,12 @@ function ApprovalPanel(props: {
           }}
         >
           <p
-            className="font-mono text-[10px] font-semibold uppercase tracking-wider"
+            className="font-mono text-[11px] font-semibold uppercase tracking-wider"
             style={{ color: hasEscalation ? "var(--block)" : "var(--faint)" }}
           >
             Basis to decline
           </p>
-          <ul className="mt-1.5 space-y-1 text-[12px]" style={{ color: "var(--ink)" }}>
+          <ul className="mt-1.5 space-y-1 text-[13px]" style={{ color: "var(--ink)" }}>
             {hasEscalation ? (
               escalations.map((e) => (
                 <li key={e.id}>
@@ -1495,7 +1495,7 @@ function ApprovalPanel(props: {
         </div>
       </div>
 
-      <p className="mt-3 text-[12.5px]" style={{ color: "var(--muted)" }}>
+      <p className="mt-3 text-[13.5px]" style={{ color: "var(--muted)" }}>
         The pipeline has stopped. It will not retrieve, draft, price or contact
         anyone until a named partner decides. This is a recommendation, not a
         decision — the partner can approve or decline against this evidence
@@ -1507,13 +1507,13 @@ function ApprovalPanel(props: {
           className="mt-3 rounded-md border-2 p-3"
           style={{ borderColor: "var(--block)", background: "var(--block-bg)" }}
         >
-          <p className="text-[12.5px] font-semibold" style={{ color: "var(--block)" }}>
+          <p className="text-[13.5px] font-semibold" style={{ color: "var(--block)" }}>
             {score.recommendation === "DECLINE"
               ? "The model recommends DECLINE."
               : `${escalations.length} escalation rule${escalations.length > 1 ? "s" : ""} fired.`}{" "}
             Approving goes against that.
           </p>
-          <label className="mt-2 flex items-start gap-2 text-[12px]" style={{ color: "var(--ink)" }}>
+          <label className="mt-2 flex items-start gap-2 text-[13px]" style={{ color: "var(--ink)" }}>
             <input
               type="checkbox"
               checked={overrideAck}
@@ -1537,7 +1537,7 @@ function ApprovalPanel(props: {
             setName(e.target.value);
             setOverrideAck(false);
           }}
-          className="min-w-64 rounded-md border px-2.5 py-2 text-[13px] outline-none"
+          className="min-w-64 rounded-md border px-2.5 py-2 text-[14px] outline-none"
           style={{ borderColor: "var(--line)", background: "var(--card)" }}
         >
           <option value="">Select approving partner…</option>
@@ -1551,7 +1551,7 @@ function ApprovalPanel(props: {
           type="button"
           onClick={onApprove}
           disabled={!canApprove}
-          className="rounded-md px-4 py-2 text-[13px] font-semibold text-white disabled:opacity-40"
+          className="rounded-md px-4 py-2 text-[14px] font-semibold text-white disabled:opacity-40"
           style={{ background: "var(--olive-deep)" }}
         >
           Approve
@@ -1560,7 +1560,7 @@ function ApprovalPanel(props: {
           type="button"
           onClick={onDecline}
           disabled={busy}
-          className="rounded-md border px-4 py-2 text-[13px] font-semibold disabled:opacity-40"
+          className="rounded-md border px-4 py-2 text-[14px] font-semibold disabled:opacity-40"
           style={{ borderColor: "var(--block)", color: "var(--block)" }}
         >
           Decline
@@ -1582,7 +1582,7 @@ function RetrievePanel({ data }: { data: RetrieveResult }) {
   return (
     <div className="space-y-4 pb-4">
       <Card pad={false}>
-        <div className="border-b px-4 py-2.5 text-[11.5px]" style={{ borderColor: "var(--line-soft)", color: "var(--muted)" }}>
+        <div className="border-b px-4 py-2.5 text-[12.5px]" style={{ borderColor: "var(--line-soft)", color: "var(--muted)" }}>
           All 12 engagements, ranked. Bars scaled {lo.toFixed(2)}–{hi.toFixed(2)} for
           contrast; the raw cosine value is shown alongside.
         </div>
@@ -1592,18 +1592,18 @@ function RetrievePanel({ data }: { data: RetrieveResult }) {
             return (
               <div
                 key={r.id}
-                className="grid grid-cols-[26px_92px_1fr_120px] items-center gap-3 px-4 py-2 text-[12px]"
+                className="grid grid-cols-[26px_92px_1fr_120px] items-center gap-3 px-4 py-2 text-[13px]"
                 style={{
                   background: sel ? "var(--mint)" : undefined,
                   borderLeft: sel ? "3px solid var(--olive)" : "3px solid transparent",
                   opacity: r.excluded_restricted ? 0.55 : 1,
                 }}
               >
-                <span className="tnum font-mono text-[11px]" style={{ color: "var(--faint)" }}>
+                <span className="tnum font-mono text-[12px]" style={{ color: "var(--faint)" }}>
                   {i + 1}
                 </span>
                 <span
-                  className="font-mono text-[11px] font-semibold"
+                  className="font-mono text-[12px] font-semibold"
                   style={{ color: sel ? "var(--olive-deep)" : "var(--ink)" }}
                 >
                   {r.id}
@@ -1617,11 +1617,11 @@ function RetrievePanel({ data }: { data: RetrieveResult }) {
                   >
                     {r.company}
                   </span>
-                  <span className="text-[10.5px]" style={{ color: "var(--faint)" }}>
+                  <span className="text-[11.5px]" style={{ color: "var(--faint)" }}>
                     {r.sector} · {r.outcome}
                     {r.excluded_restricted && (
                       <span
-                        className="ml-1.5 rounded px-1 py-0.5 text-[9px] font-semibold uppercase"
+                        className="ml-1.5 rounded px-1 py-0.5 text-[10.5px] font-semibold uppercase"
                         style={{ background: "var(--block-bg)", color: "var(--block)" }}
                       >
                         MSA — not eligible
@@ -1639,7 +1639,7 @@ function RetrievePanel({ data }: { data: RetrieveResult }) {
                       }}
                     />
                   </span>
-                  <span className="tnum font-mono text-[10.5px]" style={{ color: "var(--muted)" }}>
+                  <span className="tnum font-mono text-[11.5px]" style={{ color: "var(--muted)" }}>
                     {r.similarity.toFixed(4)}
                   </span>
                 </span>
@@ -1653,17 +1653,17 @@ function RetrievePanel({ data }: { data: RetrieveResult }) {
         <SectionLabel>Selected comparables — grounded in the record</SectionLabel>
         {data.selected.map((s) => (
           <Card key={s.id}>
-            <p className="text-[13px] font-bold">
-              <span className="font-mono text-[12px]" style={{ color: "var(--olive-deep)" }}>
+            <p className="text-[14px] font-bold">
+              <span className="font-mono text-[13px]" style={{ color: "var(--olive-deep)" }}>
                 {s.id}
               </span>{" "}
               {s.record.company.name} — {s.record.engagement.title}{" "}
-              <span className="font-mono text-[11px]" style={{ color: "var(--faint)" }}>
+              <span className="font-mono text-[12px]" style={{ color: "var(--faint)" }}>
                 sim {s.similarity.toFixed(4)}
               </span>
             </p>
             {s.reason ? (
-              <div className="mt-2 space-y-1.5 text-[12.5px]" style={{ color: "var(--muted)" }}>
+              <div className="mt-2 space-y-1.5 text-[13.5px]" style={{ color: "var(--muted)" }}>
                 <p>{s.reason.why_selected}</p>
                 {s.reason.transferable_assets?.length > 0 && (
                   <p>
@@ -1684,7 +1684,7 @@ function RetrievePanel({ data }: { data: RetrieveResult }) {
                 {s.reason.caveats && <p className="italic">Caveats: {s.reason.caveats}</p>}
               </div>
             ) : (
-              <p className="mt-2 text-[12px] italic" style={{ color: "var(--faint)" }}>
+              <p className="mt-2 text-[13px] italic" style={{ color: "var(--faint)" }}>
                 Grounded narrative unavailable (model call failed or quota). The
                 similarity score stands.
               </p>
@@ -1707,7 +1707,7 @@ function DraftPanel({ draft, withheld }: { draft: Draft; withheld: boolean }) {
     <div className="space-y-3 pb-4">
       {withheld && (
         <div
-          className="rounded-lg border-2 px-4 py-3 text-[12px] font-bold uppercase tracking-wide"
+          className="rounded-lg border-2 px-4 py-3 text-[13px] font-bold uppercase tracking-wide"
           style={{ borderColor: "var(--block)", background: "var(--block-bg)", color: "var(--block)" }}
         >
           Draft withheld — the gate blocked release. Shown here for the reviewing
@@ -1717,12 +1717,12 @@ function DraftPanel({ draft, withheld }: { draft: Draft; withheld: boolean }) {
       <div className={withheld ? "pointer-events-none opacity-45" : ""}>
         <Card>
           <SectionLabel>Executive summary</SectionLabel>
-          <p className="text-[13px]">{draft.executive_summary}</p>
+          <p className="text-[14px]">{draft.executive_summary}</p>
 
           <SectionLabel>
             <span className="mt-4 block">Win themes</span>
           </SectionLabel>
-          <ul className="space-y-1 text-[12.5px]">
+          <ul className="space-y-1 text-[13.5px]">
             {(draft.win_themes ?? []).map((w, i) => (
               <li key={i} className="flex flex-wrap items-center gap-2">
                 <span>{w.theme}</span>
@@ -1738,12 +1738,12 @@ function DraftPanel({ draft, withheld }: { draft: Draft; withheld: boolean }) {
             {(draft.proposed_approach ?? []).map((p, i) => (
               <div
                 key={i}
-                className="rounded-md border p-2 text-[12.5px]"
+                className="rounded-md border p-2 text-[13.5px]"
                 style={{ borderColor: "var(--line-soft)" }}
               >
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="font-semibold">{p.phase}</span>
-                  <span className="font-mono text-[11px]" style={{ color: "var(--faint)" }}>
+                  <span className="font-mono text-[12px]" style={{ color: "var(--faint)" }}>
                     {p.weeks}
                   </span>
                   <Chip tone={srcTone(p.source)}>{p.source}</Chip>
@@ -1761,7 +1761,7 @@ function DraftPanel({ draft, withheld }: { draft: Draft; withheld: boolean }) {
           <SectionLabel>
             <span className="mt-4 block">Team</span>
           </SectionLabel>
-          <ul className="space-y-1 text-[12.5px]">
+          <ul className="space-y-1 text-[13.5px]">
             {(draft.team ?? []).map((t, i) => (
               <li key={i} className="flex flex-wrap items-center gap-2">
                 <span>
@@ -1775,7 +1775,7 @@ function DraftPanel({ draft, withheld }: { draft: Draft; withheld: boolean }) {
           <SectionLabel>
             <span className="mt-4 block">Credentials to cite</span>
           </SectionLabel>
-          <ul className="space-y-1 text-[12.5px]">
+          <ul className="space-y-1 text-[13.5px]">
             {(draft.credentials_to_cite ?? []).map((c, i) => (
               <li key={i} className="flex flex-wrap items-center gap-2">
                 <span>{c.credential}</span>
@@ -1787,10 +1787,10 @@ function DraftPanel({ draft, withheld }: { draft: Draft; withheld: boolean }) {
           <SectionLabel>
             <span className="mt-4 block">Commercial recommendation</span>
           </SectionLabel>
-          <div className="text-[12.5px]">
+          <div className="text-[13.5px]">
             <div className="flex flex-wrap items-center gap-2">
               <span>{draft.commercial_recommendation?.structure}</span>
-              <span className="font-mono text-[11px]">
+              <span className="font-mono text-[12px]">
                 {draft.commercial_recommendation?.indicative_fee}
               </span>
               <Chip tone={srcTone(draft.commercial_recommendation?.source ?? "")}>
@@ -1816,7 +1816,7 @@ function DraftPanel({ draft, withheld }: { draft: Draft; withheld: boolean }) {
           <SectionLabel>
             <span className="mt-4 block">Open questions for partner</span>
           </SectionLabel>
-          <ul className="list-disc space-y-0.5 pl-4 text-[12.5px]" style={{ color: "var(--muted)" }}>
+          <ul className="list-disc space-y-0.5 pl-4 text-[13.5px]" style={{ color: "var(--muted)" }}>
             {(draft.open_questions_for_partner ?? []).map((q, i) => (
               <li key={i}>{q}</li>
             ))}
@@ -1840,17 +1840,17 @@ function GatePanel({ check }: { check: CheckResult }) {
         <span className="text-[16px] font-extrabold" style={{ color: tone.fg }}>
           {check.status}
         </span>
-        <span className="text-[12px]" style={{ color: tone.fg }}>
+        <span className="text-[13px]" style={{ color: tone.fg }}>
           can_proceed = <span className="font-mono font-semibold">{String(check.can_proceed)}</span>
         </span>
-        <span className="ml-auto text-[11px]" style={{ color: "var(--faint)" }}>
+        <span className="ml-auto text-[12px]" style={{ color: "var(--faint)" }}>
           ran in code · no model call
         </span>
       </div>
 
       {check.status === "BLOCKED" && (
         <p
-          className="rounded-md border-2 px-3 py-2 text-[12.5px] font-semibold"
+          className="rounded-md border-2 px-3 py-2 text-[13.5px] font-semibold"
           style={{ borderColor: "var(--block)", background: "var(--block-bg)", color: "var(--block)" }}
         >
           Draft withheld and escalated. This gate is deterministic code, not a
@@ -1865,21 +1865,21 @@ function GatePanel({ check }: { check: CheckResult }) {
           return (
             <Card key={c.id}>
               <div className="flex flex-wrap items-center gap-2">
-                <span className="font-mono text-[11px] font-semibold" style={{ color: "var(--faint)" }}>
+                <span className="font-mono text-[12px] font-semibold" style={{ color: "var(--faint)" }}>
                   {c.id}
                 </span>
-                <span className="text-[13px] font-bold">{c.label}</span>
+                <span className="text-[14px] font-bold">{c.label}</span>
                 <span
-                  className="rounded px-1.5 py-0.5 text-[10px] font-bold uppercase"
+                  className="rounded px-1.5 py-0.5 text-[11px] font-bold uppercase"
                   style={{ background: t.bg, color: t.fg }}
                 >
                   {c.outcome}
                 </span>
               </div>
-              <p className="mt-1 text-[12px]" style={{ color: "var(--faint)" }}>
+              <p className="mt-1 text-[13px]" style={{ color: "var(--faint)" }}>
                 {c.question}
               </p>
-              <p className="mt-1.5 text-[12.5px]">{c.detail}</p>
+              <p className="mt-1.5 text-[13.5px]">{c.detail}</p>
             </Card>
           );
         })}
@@ -1892,15 +1892,15 @@ function GatePanel({ check }: { check: CheckResult }) {
             {check.flags.map((f, i) => (
               <div
                 key={i}
-                className="rounded-md border px-3 py-2 text-[12px]"
+                className="rounded-md border px-3 py-2 text-[13px]"
                 style={{
-                  borderColor: f.severity === "BLOCK" ? "#e6c3bd" : "#e6d8a8",
+                  borderColor: f.severity === "BLOCK" ? "#debab2" : "#e7d6a0",
                   background: f.severity === "BLOCK" ? "var(--block-bg)" : "var(--review-bg)",
                 }}
               >
                 <span className="font-mono font-bold">{f.code}</span>{" "}
                 <span
-                  className="rounded px-1 py-0.5 text-[9px] font-bold text-white"
+                  className="rounded px-1 py-0.5 text-[10.5px] font-bold text-white"
                   style={{ background: f.severity === "BLOCK" ? "var(--block)" : "var(--review)" }}
                 >
                   {f.severity}

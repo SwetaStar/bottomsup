@@ -1,38 +1,45 @@
 @import "tailwindcss";
 
 /* -------------------------------------------------------------------------
-   VCG Proposal Agent — product palette (from the supplied Coolors set)
-   Pale Sky / Frosted Mint / Muted Olive / Royal Gold / Lime Cream,
-   plus picked neutrals and reserved status colours. Single light theme:
-   the screen is screenshot evidence, so it does not follow OS dark mode.
+   VCG Proposal Agent — "Mossy hollow" product palette
+   #636B2F / #BAC095 / #D4DE95 / #3D4127, plus a warm gold kept as a second
+   hue so informational UI stays visually separable from brand/action olive
+   and from the PASS/REVIEW/BLOCK status colours (those stay semantically
+   distinct — green/amber/red — on purpose, so the gate verdicts are never
+   colour-ambiguous). Single light theme: the screen is screenshot evidence,
+   so it does not follow OS dark mode.
+
+   Text colours (--ink, --muted, --faint) were darkened from the previous
+   palette to clear WCAG AA contrast (4.5:1) against white/card backgrounds
+   at the small sizes this UI uses — see the text-size bump below too.
 ---------------------------------------------------------------------------- */
 :root {
-  --sky: #a7c6da;
-  --sky-deep: #2f5a73;
-  --mint: #eefcce;
-  --olive: #9eb25d;
-  --olive-deep: #5f7a2e;
-  --gold: #f1db4b;
-  --gold-deep: #937212;
-  --lime: #edff71;
+  --sky: #f1ecd2;
+  --sky-deep: #6e5a1e;
+  --mint: #eef2dc;
+  --olive: #8fa050;
+  --olive-deep: #636b2f;
+  --gold: #e3b23c;
+  --gold-deep: #8a6412;
+  --lime: #d4de95;
 
-  --bg: #f4f6f2;
+  --bg: #f6f7ee;
   --card: #ffffff;
-  --ink: #222a2d;
-  --muted: #5d676b;
-  --faint: #8b938f;
-  --line: #e2e7db;
-  --line-soft: #edf0e8;
+  --ink: #30351f;
+  --muted: #4c5440;
+  --faint: #5f684f;
+  --line: #dce1cc;
+  --line-soft: #edf0e2;
 
-  --btn: #26333b;
-  --btn-hover: #1a242a;
+  --btn: #3d4127;
+  --btn-hover: #272b16;
 
-  --pass: #5f7a2e;
-  --pass-bg: #eef6d9;
-  --review: #9a7b12;
-  --review-bg: #fbf1cd;
-  --block: #b23b33;
-  --block-bg: #f6e6e3;
+  --pass: #4f5a24;
+  --pass-bg: #e6ecce;
+  --review: #8a6412;
+  --review-bg: #f7edcb;
+  --block: #9c3a2e;
+  --block-bg: #f5e3de;
 
   --font-ui:
     var(--font-ui), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -78,7 +85,7 @@ body {
   background: var(--bg);
   color: var(--ink);
   font-family: var(--font-ui);
-  font-size: 14px;
+  font-size: 15px;
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
   font-feature-settings: "tnum" 0;
@@ -111,14 +118,14 @@ body {
 /* quiet scrollbars inside panels */
 .scroll-area {
   scrollbar-width: thin;
-  scrollbar-color: #cdd4c8 transparent;
+  scrollbar-color: #b7c09a transparent;
 }
 .scroll-area::-webkit-scrollbar {
   width: 10px;
   height: 10px;
 }
 .scroll-area::-webkit-scrollbar-thumb {
-  background: #d4dacd;
+  background: #bfc8a3;
   border-radius: 999px;
   border: 3px solid var(--bg);
 }
