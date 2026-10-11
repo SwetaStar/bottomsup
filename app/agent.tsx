@@ -621,6 +621,7 @@ export default function Agent({
             {active === "approval" && (
               <ApprovalPanel
                 score={score}
+                criteria={criteria}
                 awaiting={awaitingApproval}
                 approvedBy={approvedBy}
                 declined={declined}
@@ -1145,6 +1146,7 @@ function QualifyPanel({
 
 function ApprovalPanel(props: {
   score: ScoreResult | null;
+  criteria: Criteria;
   awaiting: boolean;
   approvedBy: { name: string; at: string } | null;
   declined: boolean;
@@ -1154,8 +1156,18 @@ function ApprovalPanel(props: {
   onDecline: () => void;
   busy: boolean;
 }) {
-  const { score, awaiting, approvedBy, declined, name, setName, onApprove, onDecline, busy } =
-    props;
+  const {
+    score,
+    criteria,
+    awaiting,
+    approvedBy,
+    declined,
+    name,
+    setName,
+    onApprove,
+    onDecline,
+    busy,
+  } = props;
 
   if (approvedBy) {
     return (
@@ -1183,6 +1195,17 @@ function ApprovalPanel(props: {
     return <Placeholder>The approval gate appears once qualification is done.</Placeholder>;
   }
   const tone = recTone(score.recommendation);
+  const { pursue, conditional } = criteria.thresholds;
+  const sortedByContribution = [...score.scores].sort(
+    (a, b) => b.contribution - a.contribution
+  );
+  const strongest = sortedByContribution.slice(0, 2);
+  const weakest = sortedByContribution[sortedByContribution.length - 1];
+  const escalations = score.escalations_triggered;
+  const hasEscalation = escalations.length > 0;
+  const clearsPursue = score.weighted_total >= pursue;
+  const clearsConditional = score.weighted_total >= conditional;
+
   return (
     <div
       className="rounded-lg border-2 p-5"
@@ -1197,10 +1220,109 @@ function ApprovalPanel(props: {
           {score.recommendation}
         </span>{" "}
         · weighted score <span className="tnum font-semibold">{score.weighted_total.toFixed(2)}</span>
+        <span className="text-[12px]" style={{ color: "var(--faint)" }}>
+          {" "}
+          / 5.00
+        </span>
       </p>
-      <p className="mt-2 text-[12.5px]" style={{ color: "var(--muted)" }}>
+      <p className="mt-1.5 text-[12px]" style={{ color: "var(--muted)" }}>
+        Six criteria, each scored 1–5 by the model and multiplied by VCG&apos;s
+        published weight, summed to this one number. Full per-criterion detail
+        is on the <span className="font-semibold">Qualify</span> tab — the
+        headline reasons are below.
+      </p>
+
+      {score.rationale && (
+        <p
+          className="mt-3 rounded-md border-l-4 px-3 py-2 text-[12.5px] italic"
+          style={{ borderColor: "var(--sky-deep)", background: "var(--card)", color: "var(--ink)" }}
+        >
+          “{score.rationale}”
+        </p>
+      )}
+
+      <div className="mt-4 grid gap-3 sm:grid-cols-2">
+        <div
+          className="rounded-md border p-3"
+          style={{ borderColor: "var(--olive)", background: "var(--pass-bg)" }}
+        >
+          <p
+            className="font-mono text-[10px] font-semibold uppercase tracking-wider"
+            style={{ color: "var(--pass)" }}
+          >
+            Basis to approve
+          </p>
+          <ul className="mt-1.5 space-y-1 text-[12px]" style={{ color: "var(--ink)" }}>
+            <li>
+              Weighted total {score.weighted_total.toFixed(2)}{" "}
+              {clearsPursue
+                ? `clears the pursue line (≥ ${pursue.toFixed(2)}).`
+                : clearsConditional
+                  ? `clears the conditional line (≥ ${conditional.toFixed(2)}), below pursue.`
+                  : `is below the conditional line (${conditional.toFixed(2)}).`}
+            </li>
+            {strongest.map((c) => (
+              <li key={c.id}>
+                <span className="font-semibold">
+                  {c.criterion} ({c.score}/5, {(c.weight * 100).toFixed(0)}% weight)
+                </span>
+                {c.reasoning ? ` — ${c.reasoning}` : ""}
+              </li>
+            ))}
+            {!hasEscalation && <li>No escalation rule has fired.</li>}
+          </ul>
+        </div>
+
+        <div
+          className="rounded-md border p-3"
+          style={{
+            borderColor: hasEscalation ? "var(--block)" : "var(--line)",
+            background: hasEscalation ? "var(--block-bg)" : "var(--card)",
+          }}
+        >
+          <p
+            className="font-mono text-[10px] font-semibold uppercase tracking-wider"
+            style={{ color: hasEscalation ? "var(--block)" : "var(--faint)" }}
+          >
+            Basis to decline
+          </p>
+          <ul className="mt-1.5 space-y-1 text-[12px]" style={{ color: "var(--ink)" }}>
+            {hasEscalation ? (
+              escalations.map((e) => (
+                <li key={e.id}>
+                  <span className="font-semibold">
+                    {e.id} triggered
+                  </span>{" "}
+                  — {e.rule}
+                  {e.detail ? `: ${e.detail}` : ""}. An escalation overrides the
+                  score.
+                </li>
+              ))
+            ) : (
+              <li>No escalation rule triggered — nothing overrides the score.</li>
+            )}
+            <li>
+              <span className="font-semibold">
+                {weakest.criterion} ({weakest.score}/5, {(weakest.weight * 100).toFixed(0)}% weight)
+              </span>
+              {weakest.reasoning ? ` — ${weakest.reasoning}` : ""} — the weakest
+              criterion in this scorecard.
+            </li>
+            {!clearsConditional && (
+              <li>
+                Weighted total is below the conditional line (
+                {conditional.toFixed(2)}) — the model recommends decline.
+              </li>
+            )}
+          </ul>
+        </div>
+      </div>
+
+      <p className="mt-3 text-[12.5px]" style={{ color: "var(--muted)" }}>
         The pipeline has stopped. It will not retrieve, draft, price or contact
-        anyone until a named partner decides.
+        anyone until a named partner decides. This is a recommendation, not a
+        decision — the partner can approve or decline against this evidence
+        either way.
       </p>
       <div className="mt-4 flex flex-wrap items-center gap-2.5">
         <input
