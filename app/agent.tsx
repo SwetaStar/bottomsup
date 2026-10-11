@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, type CSSProperties, type ReactNode } from "react";
+import { useMemo, useState, type CSSProperties, type ReactNode } from "react";
 import { SAMPLE_RFPS, type SampleRFP } from "@/lib/sample-rfp";
 import type {
   CheckResult,
@@ -297,6 +297,7 @@ export default function Agent({
   const [check, setCheck] = useState<CheckResult | null>(null);
 
   const [approverName, setApproverName] = useState("");
+  const [overrideAck, setOverrideAck] = useState(false);
   const [approvedBy, setApprovedBy] = useState<{ name: string; at: string } | null>(
     null
   );
@@ -351,6 +352,7 @@ export default function Agent({
     setCheck(null);
     setApprovedBy(null);
     setApproverName("");
+    setOverrideAck(false);
     setDeclined(false);
     setError(null);
   }
@@ -381,7 +383,7 @@ export default function Agent({
 
       setActive("qualify");
       const s = await step("qualify", "qualify", () =>
-        post<ScoreResult>("/api/score", { rfp: p.parsed })
+        post<ScoreResult>("/api/score", { rfp: p.parsed, clientId: effectiveClientId })
       );
       setScore(s);
 
@@ -394,12 +396,12 @@ export default function Agent({
     }
   }
 
-  // Phase B — only reachable from the Approve button.
-  async function approve() {
-    const name = approverName.trim();
-    if (!name || !parsed) return;
-    setApprovedBy({ name, at: new Date().toISOString() });
-    set("ha1", "done");
+  // Phase B — retrieve, draft, gate. Re-entrant: a retry after a transient
+  // failure here re-runs from retrieve, but never touches Parse, Qualify or
+  // the partner's Approval decision, which are already committed by this point.
+  async function runAfterApproval() {
+    if (!parsed) return;
+    setError(null);
     setBusy(true);
     let atDp3 = false;
     try {
@@ -435,6 +437,35 @@ export default function Agent({
       }
     } finally {
       setBusy(false);
+    }
+  }
+
+  // Only reachable from the Approve button.
+  async function approve() {
+    const name = approverName.trim();
+    if (!name || !parsed || !score) return;
+    // Defense in depth: the button is already disabled client-side until
+    // overrideAck is checked, but an override is never approved without it,
+    // even if this function were ever called some other way.
+    const isOverride =
+      score.recommendation === "DECLINE" || score.escalations_triggered.length > 0;
+    if (isOverride && !overrideAck) return;
+    setApprovedBy({ name, at: new Date().toISOString() });
+    set("ha1", "done");
+    await runAfterApproval();
+  }
+
+  // The error banner's Retry button. Parse/Qualify failures happen before any
+  // partner commitment, so retrying them just re-runs from Setup. A failure
+  // in Retrieve, Draft or the Gate happens after a partner has already
+  // approved — retrying there must not discard that approval, so it resumes
+  // Phase B instead of calling run() again.
+  function retry() {
+    if (!error) return;
+    if (error.tab === "parse" || error.tab === "qualify") {
+      run();
+    } else if (approvedBy) {
+      runAfterApproval();
     }
   }
 
@@ -575,14 +606,29 @@ export default function Agent({
           <Explain tab={active} />
           {error && error.tab === active && (
             <div
-              className="mb-3 rounded-md border px-3 py-2 text-[12.5px]"
+              className="mb-3 flex flex-wrap items-center gap-3 rounded-md border px-3 py-2 text-[12.5px]"
               style={{
                 borderColor: "#e6c3bd",
                 background: "var(--block-bg)",
                 color: "var(--block)",
               }}
             >
-              {error.message}
+              <span className="flex-1">
+                {error.message}
+                <span className="block text-[11px]" style={{ color: "var(--block)" }}>
+                  Usually a transient hiccup, not a problem with the RFP or
+                  the decision made — safe to retry.
+                </span>
+              </span>
+              <button
+                type="button"
+                onClick={retry}
+                disabled={busy}
+                className="shrink-0 rounded-md border px-3 py-1.5 text-[12px] font-semibold disabled:opacity-40"
+                style={{ borderColor: "var(--block)", color: "var(--block)" }}
+              >
+                Retry
+              </button>
             </div>
           )}
           <div className="min-h-0 flex-1 overflow-y-auto pr-1 scroll-area">
@@ -627,6 +673,8 @@ export default function Agent({
                 declined={declined}
                 name={approverName}
                 setName={setApproverName}
+                overrideAck={overrideAck}
+                setOverrideAck={setOverrideAck}
                 onApprove={approve}
                 onDecline={decline}
                 busy={busy}
@@ -926,10 +974,14 @@ function QualifyPanel({
 
   // A new run replaces `score` wholesale — snap the sliders back to VCG's
   // published weights so a what-if left over from a previous RFP can't be
-  // mistaken for this one's default.
-  useEffect(() => {
+  // mistaken for this one's default. Reset during render (React's documented
+  // pattern for "state tied to a prop"), not in an effect — that avoids an
+  // extra post-mount render just to discard the stale weights.
+  const [prevScore, setPrevScore] = useState(score);
+  if (score !== prevScore) {
+    setPrevScore(score);
     setWeights(defaultWeights);
-  }, [score, defaultWeights]);
+  }
 
   const weightSum =
     Object.values(weights).reduce((a, b) => a + b, 0) || 1;
@@ -1270,6 +1322,8 @@ function ApprovalPanel(props: {
   declined: boolean;
   name: string;
   setName: (s: string) => void;
+  overrideAck: boolean;
+  setOverrideAck: (b: boolean) => void;
   onApprove: () => void;
   onDecline: () => void;
   busy: boolean;
@@ -1282,10 +1336,13 @@ function ApprovalPanel(props: {
     declined,
     name,
     setName,
+    overrideAck,
+    setOverrideAck,
     onApprove,
     onDecline,
     busy,
   } = props;
+  const roster = criteria.firm_context.partners_available;
 
   if (approvedBy) {
     return (
@@ -1323,6 +1380,8 @@ function ApprovalPanel(props: {
   const hasEscalation = escalations.length > 0;
   const clearsPursue = score.weighted_total >= pursue;
   const clearsConditional = score.weighted_total >= conditional;
+  const isOverride = score.recommendation === "DECLINE" || hasEscalation;
+  const canApprove = name.trim().length > 0 && !busy && (!isOverride || overrideAck);
 
   return (
     <div
@@ -1442,18 +1501,56 @@ function ApprovalPanel(props: {
         decision — the partner can approve or decline against this evidence
         either way.
       </p>
+
+      {isOverride && (
+        <div
+          className="mt-3 rounded-md border-2 p-3"
+          style={{ borderColor: "var(--block)", background: "var(--block-bg)" }}
+        >
+          <p className="text-[12.5px] font-semibold" style={{ color: "var(--block)" }}>
+            {score.recommendation === "DECLINE"
+              ? "The model recommends DECLINE."
+              : `${escalations.length} escalation rule${escalations.length > 1 ? "s" : ""} fired.`}{" "}
+            Approving goes against that.
+          </p>
+          <label className="mt-2 flex items-start gap-2 text-[12px]" style={{ color: "var(--ink)" }}>
+            <input
+              type="checkbox"
+              checked={overrideAck}
+              onChange={(e) => setOverrideAck(e.target.checked)}
+              className="mt-0.5"
+            />
+            <span>
+              I have read the basis above and am approving this pursuit{" "}
+              <span className="font-semibold">against</span>{" "}
+              {score.recommendation === "DECLINE" ? "the model's recommendation" : "a triggered escalation"}
+              , on my own authority as the named partner.
+            </span>
+          </label>
+        </div>
+      )}
+
       <div className="mt-4 flex flex-wrap items-center gap-2.5">
-        <input
+        <select
           value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="Type your name to enable the decision"
+          onChange={(e) => {
+            setName(e.target.value);
+            setOverrideAck(false);
+          }}
           className="min-w-64 rounded-md border px-2.5 py-2 text-[13px] outline-none"
           style={{ borderColor: "var(--line)", background: "var(--card)" }}
-        />
+        >
+          <option value="">Select approving partner…</option>
+          {roster.map((p) => (
+            <option key={p.name} value={p.name}>
+              {p.name} — {p.focus} ({p.availability} available)
+            </option>
+          ))}
+        </select>
         <button
           type="button"
           onClick={onApprove}
-          disabled={!name.trim() || busy}
+          disabled={!canApprove}
           className="rounded-md px-4 py-2 text-[13px] font-semibold text-white disabled:opacity-40"
           style={{ background: "var(--olive-deep)" }}
         >

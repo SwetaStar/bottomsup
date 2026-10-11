@@ -56,9 +56,17 @@ Rules:
 3. Apply the supplied thresholds. Do not invent thresholds.
 4. evidence must quote or closely paraphrase the opportunity or the criteria.
    If you have no evidence, write "no evidence available" and score 3.
-5. Check every escalation E1-E4. An escalation overrides the score.
-6. rationale: at most three sentences, for a partner with thirty seconds.
-7. partner_decision_required is always true.`;
+5. Check escalations E1, E2 and E4 against the opportunity text. An escalation
+   overrides the score.
+6. Do NOT evaluate or report E3 ("client MSA does not permit generative AI
+   tooling"). You were not given this client's contract, so you cannot know
+   it — the server checks E3 from the actual contract record and adds it
+   itself. If the opportunity merely asks the bidder to disclose or confirm
+   AI/automated-tooling usage (a forward-looking disclosure request, not a
+   statement that an existing contract forbids it), that is not E3 and is not
+   any escalation — note it in rationale if relevant, nothing more.
+7. rationale: at most three sentences, for a partner with thirty seconds.
+8. partner_decision_required is always true.`;
 }
 
 export function retrieveReasonPrompt(rfpJson: string, recordJson: string): string {

@@ -2,7 +2,7 @@
 
 import { promises as fs } from "node:fs";
 import path from "node:path";
-import { getClient, EMBEDDING_MODEL, EMBEDDING_DIMS } from "@/lib/gemini";
+import { getClient, EMBEDDING_MODEL, EMBEDDING_DIMS, withGeminiRetry } from "@/lib/gemini";
 import { records } from "@/lib/data";
 import type { Engagement } from "@/lib/types";
 
@@ -26,14 +26,20 @@ export function cosineSimilarity(a: number[], b: number[]): number {
 export async function embedTexts(texts: string[]): Promise<number[][]> {
   if (texts.length === 0) return [];
   const ai = getClient();
-  const res = await ai.models.embedContent({
-    model: EMBEDDING_MODEL,
-    contents: texts,
-    config: {
-      taskType: "SEMANTIC_SIMILARITY",
-      outputDimensionality: EMBEDDING_DIMS,
-    },
-  });
+  // Routed through withGeminiRetry so a transient Vertex rate-limit here
+  // (the Retrieve step's embedding call) gets the same backoff-then-friendly
+  // -message treatment as every reasoning call, instead of the raw SDK error
+  // reaching the UI uncaught.
+  const res = await withGeminiRetry(() =>
+    ai.models.embedContent({
+      model: EMBEDDING_MODEL,
+      contents: texts,
+      config: {
+        taskType: "SEMANTIC_SIMILARITY",
+        outputDimensionality: EMBEDDING_DIMS,
+      },
+    })
+  );
   const vectors = (res.embeddings ?? []).map((e) => e.values ?? []);
   if (vectors.length !== texts.length) {
     throw new Error(

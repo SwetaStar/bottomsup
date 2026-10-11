@@ -65,6 +65,51 @@ function friendlyGeminiError(err: unknown): Error {
   return err instanceof Error ? err : new Error(msg);
 }
 
+const TRANSIENT_MARKERS = [
+  "RESOURCE_EXHAUSTED",
+  '"code":429',
+  '"code":503',
+  "UNAVAILABLE",
+  "ECONNRESET",
+  "ETIMEDOUT",
+  "fetch failed",
+];
+
+function isTransientGeminiError(err: unknown): boolean {
+  const msg = err instanceof Error ? err.message : String(err);
+  return TRANSIENT_MARKERS.some((m) => msg.includes(m));
+}
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/**
+ * Runs a Gemini SDK call, retrying on transient errors (quota/rate-limit,
+ * 503, network blips) with short backoff before giving up. A non-transient
+ * error (bad model name, bad key) fails on the first try — retrying it would
+ * just waste the backoff delay on something that will never succeed.
+ *
+ * Always throws a friendly Error, never the raw SDK/HTTP error — this is the
+ * one place that boundary is enforced, so every caller (reasoning calls in
+ * callGemini, embedding calls in lib/embeddings.ts) gets it for free.
+ */
+export async function withGeminiRetry<T>(fn: () => Promise<T>): Promise<T> {
+  const backoffsMs = [600, 1500];
+  let lastErr: unknown;
+  for (let attempt = 0; attempt <= backoffsMs.length; attempt++) {
+    try {
+      return await fn();
+    } catch (err) {
+      lastErr = err;
+      if (attempt < backoffsMs.length && isTransientGeminiError(err)) {
+        await sleep(backoffsMs[attempt]);
+        continue;
+      }
+      break;
+    }
+  }
+  throw friendlyGeminiError(lastErr);
+}
+
 /**
  * Single-turn call to Gemini that returns the raw text response.
  * The caller runs the result through safeParseJSON.
@@ -76,9 +121,8 @@ export async function callGemini({
 }: CallOptions): Promise<string> {
   const ai = getClient();
 
-  let res;
-  try {
-    res = await ai.models.generateContent({
+  const res = await withGeminiRetry(() =>
+    ai.models.generateContent({
       model: REASONING_MODEL,
       contents: prompt,
       config: {
@@ -86,10 +130,8 @@ export async function callGemini({
         maxOutputTokens,
         responseMimeType: "application/json",
       },
-    });
-  } catch (err) {
-    throw friendlyGeminiError(err);
-  }
+    })
+  );
 
   const text = res.text;
   if (!text) {
