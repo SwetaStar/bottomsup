@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type CSSProperties, type ReactNode } from "react";
 import { SAMPLE_RFPS, type SampleRFP } from "@/lib/sample-rfp";
 import type {
   CheckResult,
@@ -918,8 +918,43 @@ function QualifyPanel({
   score: ScoreResult;
   criteria: Criteria;
 }) {
-  const tone = recTone(score.recommendation);
-  const total = score.weighted_total;
+  const defaultWeights = useMemo<Record<string, number>>(
+    () => Object.fromEntries(criteria.criteria.map((c) => [c.id, c.weight])),
+    [criteria]
+  );
+  const [weights, setWeights] = useState<Record<string, number>>(defaultWeights);
+
+  // A new run replaces `score` wholesale — snap the sliders back to VCG's
+  // published weights so a what-if left over from a previous RFP can't be
+  // mistaken for this one's default.
+  useEffect(() => {
+    setWeights(defaultWeights);
+  }, [score, defaultWeights]);
+
+  const weightSum =
+    Object.values(weights).reduce((a, b) => a + b, 0) || 1;
+  const adjusted = score.scores.map((c) => {
+    const rawWeight = weights[c.id] ?? c.weight;
+    const normWeight = rawWeight / weightSum;
+    return { ...c, adjWeight: normWeight, adjContribution: c.score * normWeight };
+  });
+  const adjustedTotal = adjusted.reduce((s, c) => s + c.adjContribution, 0);
+  const isAdjusted = criteria.criteria.some(
+    (c) => Math.abs((weights[c.id] ?? 0) - c.weight) > 0.001
+  );
+  const adjRecommendation: ScoreResult["recommendation"] =
+    score.escalations_triggered.length > 0
+      ? score.recommendation // an escalation overrides the score regardless of weights
+      : adjustedTotal >= criteria.thresholds.pursue
+        ? "PURSUE"
+        : adjustedTotal >= criteria.thresholds.conditional
+          ? "PURSUE WITH CONDITIONS"
+          : "DECLINE";
+
+  const displayTotal = isAdjusted ? adjustedTotal : score.weighted_total;
+  const displayRecommendation = isAdjusted ? adjRecommendation : score.recommendation;
+  const tone = recTone(displayRecommendation);
+
   const anchorFor = (cid: string, s: number) => {
     const c = criteria.criteria.find((x) => x.id === cid);
     if (!c) return { band: "—", text: "" };
@@ -929,14 +964,66 @@ function QualifyPanel({
 
   return (
     <div className="space-y-4 pb-4">
+      {/* weight sliders — what-if, client-side only */}
+      <Card>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <SectionLabel>Adjust criteria weights — what-if, no AI call</SectionLabel>
+          {isAdjusted && (
+            <button
+              type="button"
+              onClick={() => setWeights(defaultWeights)}
+              className="rounded-md border px-2.5 py-1 text-[11px] font-semibold"
+              style={{ borderColor: "var(--line)", color: "var(--sky-deep)" }}
+            >
+              Reset to VCG defaults
+            </button>
+          )}
+        </div>
+        <div className="mt-2 space-y-2.5">
+          {criteria.criteria.map((c) => {
+            const raw = weights[c.id] ?? c.weight;
+            const normPct = ((raw / weightSum) * 100).toFixed(0);
+            return (
+              <div key={c.id} className="grid grid-cols-[150px_1fr_52px] items-center gap-3">
+                <span className="truncate text-[12px]" title={c.name}>
+                  {c.name}
+                </span>
+                <input
+                  type="range"
+                  min={0}
+                  max={50}
+                  step={1}
+                  value={Math.round(raw * 100)}
+                  onChange={(e) =>
+                    setWeights((w) => ({ ...w, [c.id]: Number(e.target.value) / 100 }))
+                  }
+                  className="w-full accent-[var(--olive)]"
+                  aria-label={`${c.name} weight`}
+                />
+                <span className="tnum text-right text-[12px] font-semibold">
+                  {normPct}%
+                </span>
+              </div>
+            );
+          })}
+        </div>
+        <p className="mt-3 text-[11px]" style={{ color: "var(--faint)" }}>
+          Sliders re-normalise to 100% automatically, so they never need to add
+          up by hand. This recalculates the arithmetic above instantly — it
+          does not call the model again, and it does not change the
+          recommendation a partner sees at Approval, which always uses VCG&apos;s
+          published weights below.
+        </p>
+      </Card>
+
       {/* stat tiles */}
       <div className="grid gap-3 sm:grid-cols-3">
         <Card>
           <p className="font-mono text-[10px] font-semibold uppercase tracking-wider" style={{ color: "var(--faint)" }}>
-            Weighted total
+            Weighted total {isAdjusted && <span style={{ color: "var(--sky-deep)" }}>· adjusted</span>}
           </p>
           <p className="mt-1 tnum text-[30px] font-extrabold leading-none">
-            {total.toFixed(2)}
+            {displayTotal.toFixed(2)}
             <span className="text-[14px] font-medium" style={{ color: "var(--faint)" }}>
               {" "}
               / 5.00
@@ -945,7 +1032,7 @@ function QualifyPanel({
           <div className="relative mt-3 h-2 w-full rounded-full" style={{ background: "var(--line-soft)" }}>
             <div
               className="absolute left-0 top-0 h-full rounded-full"
-              style={{ width: `${(total / 5) * 100}%`, background: "var(--olive)" }}
+              style={{ width: `${(displayTotal / 5) * 100}%`, background: "var(--olive)" }}
             />
             {[
               { v: criteria.thresholds.conditional, l: "conditional" },
@@ -962,20 +1049,29 @@ function QualifyPanel({
           <p className="mt-1.5 text-[10.5px]" style={{ color: "var(--faint)" }}>
             ticks: conditional ≥ {criteria.thresholds.conditional} · pursue ≥{" "}
             {criteria.thresholds.pursue}
+            {isAdjusted && (
+              <>
+                {" "}
+                · VCG official:{" "}
+                <span className="tnum font-semibold">{score.weighted_total.toFixed(2)}</span>
+              </>
+            )}
           </p>
         </Card>
         <Card>
           <p className="font-mono text-[10px] font-semibold uppercase tracking-wider" style={{ color: "var(--faint)" }}>
-            Recommendation
+            Recommendation {isAdjusted && <span style={{ color: "var(--sky-deep)" }}>· adjusted</span>}
           </p>
           <span
             className="mt-2 inline-block rounded-md px-2.5 py-1.5 text-[13px] font-bold"
             style={{ background: tone.bg, color: tone.fg }}
           >
-            {score.recommendation}
+            {displayRecommendation}
           </span>
           <p className="mt-2 text-[11px]" style={{ color: "var(--faint)" }}>
-            a recommendation, not a decision
+            {isAdjusted
+              ? `VCG official (published weights): ${score.recommendation}`
+              : "a recommendation, not a decision"}
           </p>
         </Card>
         <Card>
@@ -990,7 +1086,7 @@ function QualifyPanel({
             </span>
           </p>
           <p className="mt-2 text-[11px]" style={{ color: "var(--faint)" }}>
-            an escalation overrides the score
+            an escalation overrides the score — weights can&apos;t move it
           </p>
         </Card>
       </div>
@@ -999,18 +1095,18 @@ function QualifyPanel({
       <Card>
         <SectionLabel>How the total is built — contribution by criterion</SectionLabel>
         <div className="relative mt-1 flex h-7 w-full overflow-hidden rounded-md" style={{ background: "var(--line-soft)" }}>
-          {score.scores.map((c, i) => (
+          {adjusted.map((c, i) => (
             <div
               key={c.id}
               className="grid place-items-center border-r-2 text-[10px] font-semibold text-white"
               style={{
-                width: `${(c.contribution / 5) * 100}%`,
+                width: `${(c.adjContribution / 5) * 100}%`,
                 background: i % 2 ? "var(--sky-deep)" : "var(--olive)",
                 borderColor: "var(--card)",
               }}
-              title={`${c.id} ${c.criterion}: ${c.contribution.toFixed(2)}`}
+              title={`${c.id} ${c.criterion}: ${c.adjContribution.toFixed(2)}`}
             >
-              {c.contribution >= 0.35 ? c.id : ""}
+              {c.adjContribution >= 0.35 ? c.id : ""}
             </div>
           ))}
           {[criteria.thresholds.conditional, criteria.thresholds.pursue].map((v) => (
@@ -1024,7 +1120,7 @@ function QualifyPanel({
         <div className="mt-1.5 flex justify-between text-[10.5px]" style={{ color: "var(--faint)" }}>
           <span>0.00</span>
           <span>
-            sum = <span className="tnum font-semibold" style={{ color: "var(--ink)" }}>{total.toFixed(2)}</span>
+            sum = <span className="tnum font-semibold" style={{ color: "var(--ink)" }}>{displayTotal.toFixed(2)}</span>
           </span>
           <span>5.00</span>
         </div>
@@ -1033,9 +1129,9 @@ function QualifyPanel({
       {/* per-criterion detail */}
       <div className="space-y-2.5">
         <SectionLabel>Each score, and what it was graded against</SectionLabel>
-        {score.scores.map((c) => {
+        {adjusted.map((c) => {
           const a = anchorFor(c.id, c.score);
-          const maxContribution = 5 * c.weight;
+          const maxContribution = 5 * c.adjWeight;
           return (
             <Card key={c.id}>
               <div className="flex flex-wrap items-center justify-between gap-2">
@@ -1043,7 +1139,13 @@ function QualifyPanel({
                   <Chip tone="neutral">{c.id}</Chip>
                   <span className="text-[13px] font-bold">{c.criterion}</span>
                   <span className="text-[11px]" style={{ color: "var(--faint)" }}>
-                    weight {(c.weight * 100).toFixed(0)}%
+                    weight {(c.adjWeight * 100).toFixed(0)}%
+                    {isAdjusted && (
+                      <span style={{ color: "var(--sky-deep)" }}>
+                        {" "}
+                        (was {(c.weight * 100).toFixed(0)}%)
+                      </span>
+                    )}
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
@@ -1075,11 +1177,11 @@ function QualifyPanel({
                 </span>
                 <span>
                   <span className="tnum">
-                    {c.score} × {c.weight.toFixed(2)} ={" "}
-                    <span className="font-semibold">{c.contribution.toFixed(2)}</span>
+                    {c.score} × {c.adjWeight.toFixed(2)} ={" "}
+                    <span className="font-semibold">{c.adjContribution.toFixed(2)}</span>
                   </span>
                   <span className="mt-1 block max-w-[240px]">
-                    <MiniBar frac={c.contribution / maxContribution} tone="olive" />
+                    <MiniBar frac={c.adjContribution / maxContribution} tone="olive" />
                   </span>
                 </span>
               </div>
@@ -1138,6 +1240,22 @@ function QualifyPanel({
           </>
         )}
       </Card>
+
+      {/* default-weight basis, outside the interactive card */}
+      <p className="pt-1 text-[11px]" style={{ color: "var(--faint)" }}>
+        Default weights — sector fit {(criteria.criteria.find((c) => c.id === "C1")?.weight ?? 0) * 100}%, capability
+        fit {(criteria.criteria.find((c) => c.id === "C2")?.weight ?? 0) * 100}%, competitive
+        position {(criteria.criteria.find((c) => c.id === "C3")?.weight ?? 0) * 100}%, commercial
+        viability {(criteria.criteria.find((c) => c.id === "C4")?.weight ?? 0) * 100}%, capacity &
+        mobilisation {(criteria.criteria.find((c) => c.id === "C5")?.weight ?? 0) * 100}%, conflict &
+        risk {(criteria.criteria.find((c) => c.id === "C6")?.weight ?? 0) * 100}% — are VCG&apos;s published
+        pursuit-qualification weights (<code>data/criteria.json</code>), set by the
+        partnership, not by this agent. The sliders above let you explore how
+        the recommendation would shift if a given pursuit should weigh these
+        differently; they recompute the arithmetic on this page only, with no
+        new AI call, and never change the criteria or the weights VCG actually
+        uses at the Approval gate.
+      </p>
     </div>
   );
 }
