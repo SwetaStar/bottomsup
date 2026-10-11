@@ -1,7 +1,9 @@
 "use client";
 
 import { useMemo, useState, type CSSProperties, type ReactNode } from "react";
+import { pdf } from "@react-pdf/renderer";
 import { SAMPLE_RFPS, type SampleRFP } from "@/lib/sample-rfp";
+import { DraftDocument } from "@/app/draft-pdf";
 import type {
   CheckResult,
   Criteria,
@@ -690,7 +692,12 @@ export default function Agent({
               ))}
             {active === "draft" &&
               (draft ? (
-                <DraftPanel draft={draft} withheld={!!dp3Blocked} />
+                <DraftPanel
+                  draft={draft}
+                  withheld={!!dp3Blocked}
+                  clientName={parsed?.client_name ?? undefined}
+                  approvedBy={approvedBy}
+                />
               ) : (
                 <Placeholder>The draft is written after retrieval.</Placeholder>
               ))}
@@ -1754,7 +1761,46 @@ function SourcedList({
   );
 }
 
-function DraftPanel({ draft, withheld }: { draft: Draft; withheld: boolean }) {
+function DraftPanel({
+  draft,
+  withheld,
+  clientName,
+  approvedBy,
+}: {
+  draft: Draft;
+  withheld: boolean;
+  clientName?: string;
+  approvedBy?: { name: string; at: string } | null;
+}) {
+  const [pdfBusy, setPdfBusy] = useState(false);
+  const [pdfError, setPdfError] = useState<string | null>(null);
+
+  async function downloadPdf() {
+    setPdfBusy(true);
+    setPdfError(null);
+    try {
+      const blob = await pdf(
+        <DraftDocument draft={draft} clientName={clientName} approvedBy={approvedBy} />
+      ).toBlob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      const safeClient = (draft.cover?.client_name || clientName || "client")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/(^-|-$)/g, "");
+      a.href = url;
+      a.download = `vcg-proposal-draft-${safeClient || "client"}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      setPdfError((e as Error).message);
+    } finally {
+      setPdfBusy(false);
+    }
+  }
+
   return (
     <div className="space-y-3 pb-4">
       {withheld && (
@@ -1766,6 +1812,29 @@ function DraftPanel({ draft, withheld }: { draft: Draft; withheld: boolean }) {
           partner only.
         </div>
       )}
+
+      <div className="flex flex-wrap items-center gap-2.5">
+        <button
+          type="button"
+          onClick={downloadPdf}
+          disabled={withheld || pdfBusy}
+          className="rounded-md px-4 py-2 text-[13px] font-semibold text-white disabled:opacity-40"
+          style={{ background: "var(--btn)" }}
+        >
+          {pdfBusy ? "Building PDF…" : "Download draft as PDF"}
+        </button>
+        <span className="text-[11.5px]" style={{ color: "var(--faint)" }}>
+          {withheld
+            ? "Disabled — the gate withheld this draft. It can't be exported until the flags are cleared."
+            : "Formatted for a partner's desk review — sources and open questions included, not a client-ready document."}
+        </span>
+      </div>
+      {pdfError && (
+        <p className="text-[12.5px]" style={{ color: "var(--block)" }}>
+          Could not build the PDF: {pdfError}
+        </p>
+      )}
+
       <div className={`space-y-3 ${withheld ? "pointer-events-none opacity-45" : ""}`}>
         {draft.lead_department && (
           <div
